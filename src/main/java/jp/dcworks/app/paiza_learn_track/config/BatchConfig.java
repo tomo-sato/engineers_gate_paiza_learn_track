@@ -6,12 +6,19 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.NonTransientResourceException;
+import org.springframework.batch.item.ParseException;
+import org.springframework.batch.item.UnexpectedInputException;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.FileSystemResource;
 
+import jp.dcworks.app.paiza_learn_track.dto.TeamUsers;
 import lombok.extern.log4j.Log4j2;
 
 @Configuration
@@ -19,33 +26,30 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class BatchConfig {
 
-	/* Job生成Factory */
+	/** Job生成Factory */
 	@Autowired
 	private JobBuilderFactory jobBuilderFactory;
 
-	/* Step生成Factory */
+	/** Step生成Factory */
 	@Autowired
 	private StepBuilderFactory stepBuilderFactory;
 
 	@Autowired
-	private ItemReader<String> reader;
+	private ItemProcessor<TeamUsers, TeamUsers> processor;
 
 	@Autowired
-	private ItemProcessor<String, String> processor;
-
-	@Autowired
-	private ItemWriter<String> writer;
+	private ItemWriter<TeamUsers> writer;
 
 	// ChunkのStepを生成
 	@Bean
-	Step step() {
+	Step step() throws UnexpectedInputException, ParseException, NonTransientResourceException, Exception {
 		// Builderの取得
 		return stepBuilderFactory.get("SampleChunkStep")
-			.<String, String>chunk(3)	// チャンクの設定
-			.reader(reader) 			// readerセット
-			.processor(processor) 		// processorセット
-			.writer(writer) 			// writerセット
-			.build(); 					// Stepの生成
+			.<TeamUsers, TeamUsers>chunk(10)	// チャンクの設定
+			.reader(reader()) 					// readerセット
+			.processor(processor) 				// processorセット
+			.writer(writer) 					// writerセット
+			.build(); 							// Stepの生成
 	}
 
 	// Jobを生成
@@ -54,6 +58,33 @@ public class BatchConfig {
 		log.info("step:{}", step.getName());
 		return jobBuilderFactory.get("SampleJob")
 				.start(step)
+				.build();
+	}
+
+	@Bean
+	FlatFileItemReader<TeamUsers> reader() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+		return new FlatFileItemReaderBuilder<TeamUsers>()
+				.name("TeamUsers")
+				.resource(new FileSystemResource("inputs/paiza_202306141414.csv"))
+				.linesToSkip(1) // ヘッダーをスキップ
+				.delimited()
+				.names(new String[] {
+					"emailAddress",
+					"courseId",
+					"courseName",
+					"courseCompletionFlag",
+					"lessonId",
+					"lessonName",
+					"lessonCompletionFlag",
+					"chapterId",
+					"chapterName",
+					"chapterCompletionFlag",
+					"chapterStartDatetime",
+					"chapterLastAccessDatetime",
+				})
+				.fieldSetMapper(new BeanWrapperFieldSetMapper<TeamUsers>() {{
+					setTargetType(TeamUsers.class);
+				}})
 				.build();
 	}
 }
