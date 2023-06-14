@@ -13,9 +13,6 @@ public class SampleProcessor implements ItemProcessor<String, String> {
 
 	@Override
 	public String process(String item) throws Exception {
-		System.out.println("hoge process");
-
-		//文字列の加工(小文字に変換)
 		item = item.toLowerCase();
 		log.info("Processor:{}", item);
 		return item;

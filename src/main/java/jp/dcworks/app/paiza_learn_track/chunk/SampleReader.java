@@ -21,12 +21,9 @@ public class SampleReader implements ItemReader<String> {
 
 	@Override
 	public String read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-		System.out.println("hoge read");
 		if (input.length > index) {
-			//配列の文字列を取得
 			String message = input[index++];
 			log.info("Read:{}", message);
-
 			return message;
 		}
 		return null;
