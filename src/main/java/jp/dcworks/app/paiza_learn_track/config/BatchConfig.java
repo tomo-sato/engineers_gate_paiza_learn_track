@@ -18,7 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 
-import jp.dcworks.app.paiza_learn_track.dto.TeamUsers;
+import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
+import jp.dcworks.app.paiza_learn_track.entity.TeamUserTaskProgress;
 import lombok.extern.log4j.Log4j2;
 
 @Configuration
@@ -35,17 +36,17 @@ public class BatchConfig {
 	private StepBuilderFactory stepBuilderFactory;
 
 	@Autowired
-	private ItemProcessor<TeamUsers, TeamUsers> processor;
+	private ItemProcessor<CsvTeamUserTaskProgress, TeamUserTaskProgress> processor;
 
 	@Autowired
-	private ItemWriter<TeamUsers> writer;
+	private ItemWriter<TeamUserTaskProgress> writer;
 
 	// ChunkのStepを生成
 	@Bean
 	Step step() throws UnexpectedInputException, ParseException, NonTransientResourceException, Exception {
 		// Builderの取得
 		return stepBuilderFactory.get("SampleChunkStep")
-			.<TeamUsers, TeamUsers>chunk(10)	// チャンクの設定
+			.<CsvTeamUserTaskProgress, TeamUserTaskProgress>chunk(10)	// チャンクの設定
 			.reader(reader()) 					// readerセット
 			.processor(processor) 				// processorセット
 			.writer(writer) 					// writerセット
@@ -62,10 +63,11 @@ public class BatchConfig {
 	}
 
 	@Bean
-	FlatFileItemReader<TeamUsers> reader() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-		return new FlatFileItemReaderBuilder<TeamUsers>()
-				.name("TeamUsers")
+	FlatFileItemReader<CsvTeamUserTaskProgress> reader() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+		return new FlatFileItemReaderBuilder<CsvTeamUserTaskProgress>()
+				.name("CsvTeamUserTaskProgress")
 				.resource(new FileSystemResource("inputs/paiza_202306141414.csv"))
+				.encoding("Shift_JIS")
 				.linesToSkip(1) // ヘッダーをスキップ
 				.delimited()
 				.names(new String[] {
@@ -82,8 +84,8 @@ public class BatchConfig {
 					"chapterStartDatetime",
 					"chapterLastAccessDatetime",
 				})
-				.fieldSetMapper(new BeanWrapperFieldSetMapper<TeamUsers>() {{
-					setTargetType(TeamUsers.class);
+				.fieldSetMapper(new BeanWrapperFieldSetMapper<CsvTeamUserTaskProgress>() {{
+					setTargetType(CsvTeamUserTaskProgress.class);
 				}})
 				.build();
 	}

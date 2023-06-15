@@ -8,7 +8,7 @@ import lombok.Data;
  * @author tomo-sato
  */
 @Data
-public class TeamUsers {
+public class CsvTeamUserTaskProgress {
 	/** メールアドレス */
 	private String emailAddress;
 
