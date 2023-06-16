@@ -33,6 +33,6 @@ public class CsvTasks {
 	/** 課題種別ID（※1.paiza、2.オリジナル課題） */
 	private String taskTypesId;
 
-	/** 学習時間（時）：算出した学習時間及び、割り当てた学習時間を登録（整数4桁、少数2桁） */
-	private String learningHours;
+	/** 学習時間（分）：算出した学習時間及び、割り当てた学習時間を登録 */
+	private String learningMinutes;
 }

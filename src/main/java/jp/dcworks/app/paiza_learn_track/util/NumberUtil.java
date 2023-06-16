@@ -78,6 +78,40 @@ public class NumberUtil {
 	}
 
 	/**
+	 * 引数の文字列を数値に変換します。
+	 * <p>
+	 * ※null、ブランクに対しては、nullを返却します。
+	 * </p>
+	 *
+	 * @param str 変換対象の文字列。
+	 * @return 返還後の{@link Double}オブジェクト。
+	 */
+	public static Double toDouble(String str) {
+		return toDouble(str, null);
+	}
+
+	/**
+	 * 引数の文字列を数値に変換します。
+	 * <p>
+	 * ※null、ブランクに対しては、{@code defaultValue}を返却します。
+	 * </p>
+	 *
+	 * @param str 変換対象の文字列。
+	 * @param defaultValue デフォルト値。
+	 * @return 返還後の{@link Double}オブジェクト。
+	 */
+	public static Double toDouble(String str, Double defaultValue) {
+		if (StringUtils.isBlank(str)) {
+			return defaultValue;
+		}
+		try {
+			return Double.parseDouble(str);
+		} catch (final NumberFormatException e) {
+			return defaultValue;
+		}
+	}
+
+	/**
 	 * プリミティブとオブジェクトの値比較を行います。
 	 *
 	 * @param constValue 定数。

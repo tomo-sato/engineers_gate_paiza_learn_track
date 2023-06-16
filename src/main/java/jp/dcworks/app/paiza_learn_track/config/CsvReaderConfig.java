@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 
+import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
 import lombok.extern.log4j.Log4j2;
 
@@ -46,6 +47,34 @@ public class CsvReaderConfig {
 				})
 				.fieldSetMapper(new BeanWrapperFieldSetMapper<CsvTeamUserTaskProgress>() {{
 					setTargetType(CsvTeamUserTaskProgress.class);
+				}})
+				.build();
+		return builder;
+	}
+
+	@Bean
+	@StepScope
+	FlatFileItemReader<CsvTasks> readTasks() {
+
+		FlatFileItemReader<CsvTasks> builder = new FlatFileItemReaderBuilder<CsvTasks>()
+				.name("CsvTeamUserTaskProgress")
+				.resource(new FileSystemResource("inputs/tasks_202306161823.csv"))
+				.encoding("Shift_JIS")
+				.linesToSkip(1) // ヘッダーをスキップ
+				.delimited()
+				.names(new String[] {
+					"courseId",
+					"courseName",
+					"lessonId",
+					"lessonName",
+					"chapterId",
+					"chapterName",
+					"exerciseNum",
+					"taskTypesId",
+					"learningMinutes",
+				})
+				.fieldSetMapper(new BeanWrapperFieldSetMapper<CsvTasks>() {{
+					setTargetType(CsvTasks.class);
 				}})
 				.build();
 		return builder;
