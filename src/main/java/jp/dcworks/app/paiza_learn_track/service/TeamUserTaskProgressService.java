@@ -51,9 +51,9 @@ public class TeamUserTaskProgressService {
 
 	/**
 	 * データ登録を行う。
-	 * @param items
+	 * @param itemsList
 	 */
-	public void saveAll(List<? extends TeamUserTaskProgress> items) {
-		repository.saveAll(items);
+	public void saveAll(List<? extends TeamUserTaskProgress> itemsList) {
+		repository.saveAll(itemsList);
 	}
 }
