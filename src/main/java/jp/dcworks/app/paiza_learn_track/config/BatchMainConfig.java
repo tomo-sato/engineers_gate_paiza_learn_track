@@ -1,5 +1,6 @@
 package jp.dcworks.app.paiza_learn_track.config;
 
+import org.mybatis.spring.batch.MyBatisPagingItemReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -7,7 +8,6 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,9 +53,9 @@ public class BatchMainConfig {
 	private final ItemWriter<TeamUserTaskProgress> csvTeamUserTaskProgressWriter;
 
 	/** 受講生データ読み取り：受講生データをCSVファイルから読み取る。 */
-	private final RepositoryItemReader<TeamUserTaskProgress> dbTeamUserTaskProgressReader;
+	private final MyBatisPagingItemReader<String> dbTeamUserTaskProgressReader;
 	/** 受講生データ読み取り：読み取ったCSVデータをエンティティに変換。 */
-	private final ItemProcessor<TeamUserTaskProgress, TeamUsers> dbTeamUsersProcessor;
+	private final ItemProcessor<String, TeamUsers> dbTeamUsersProcessor;
 	/** 受講生データ読み取り：エンティティをDBに登録。 */
 	private final ItemWriter<TeamUsers> dbTeamUsersWriter;
 
@@ -97,7 +97,7 @@ public class BatchMainConfig {
 	Step dbTeamUsersStep() {
 		// Builderの取得
 		return stepBuilderFactory.get("dbTeamUsersStep")
-			.<TeamUserTaskProgress, TeamUsers>chunk(CHUNK_SIZE)
+			.<String, TeamUsers>chunk(CHUNK_SIZE)
 			.reader(dbTeamUserTaskProgressReader)
 			.processor(dbTeamUsersProcessor)
 			.writer(dbTeamUsersWriter)

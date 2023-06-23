@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.dcworks.app.paiza_learn_track.mybatis.TeamUserTaskProgressMapper">
+
+	<!-- team_user_task_progress テーブルより email_address でグルーピングしたメールアドレスを取得する。 -->
+	<select id="findGroupByEmailAddress" resultType="java.lang.String">
+		SELECT
+			email_address
+		FROM
+			team_user_task_progress
+		GROUP BY
+			email_address
+		ORDER BY
+			email_address;
+	</select>
+</mapper>
