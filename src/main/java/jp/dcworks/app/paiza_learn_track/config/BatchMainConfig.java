@@ -7,6 +7,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,14 +16,21 @@ import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.entity.Tasks;
 import jp.dcworks.app.paiza_learn_track.entity.TeamUserTaskProgress;
+import jp.dcworks.app.paiza_learn_track.entity.TeamUsers;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
+/**
+ * バッチメインの定義クラス。
+ *
+ * @author tomo-sato
+ */
 @Configuration
 @EnableBatchProcessing
 @RequiredArgsConstructor
-@Log4j2
 public class BatchMainConfig {
+
+	/** チャンクサイズ */
+	private static final int CHUNK_SIZE = 10;
 
 	/** Job生成Factory */
 	private final JobBuilderFactory jobBuilderFactory;
@@ -30,44 +38,82 @@ public class BatchMainConfig {
 	/** Step生成Factory */
 	private final StepBuilderFactory stepBuilderFactory;
 
-	private final FlatFileItemReader<CsvTeamUserTaskProgress> csvTeamUserTaskProgressReader;
-	private final ItemProcessor<CsvTeamUserTaskProgress, TeamUserTaskProgress> csvTeamUserTaskProgressProcessor;
-	private final ItemWriter<TeamUserTaskProgress> csvTeamUserTaskProgressWriter;
-
+	/** 課題データ読み取り：課題データをCSVファイルから読み取る。 */
 	private final FlatFileItemReader<CsvTasks> csvTasksReader;
+	/** 課題データ読み取り：読み取ったCSVデータをエンティティに変換。 */
 	private final ItemProcessor<CsvTasks, Tasks> csvTasksProcessor;
+	/** 課題データ読み取り：エンティティをDBに登録。 */
 	private final ItemWriter<Tasks> csvTasksWriter;
 
-	// ChunkのStepを生成
+	/** 受講生データ読み取り：受講生データをCSVファイルから読み取る。 */
+	private final FlatFileItemReader<CsvTeamUserTaskProgress> csvTeamUserTaskProgressReader;
+	/** 受講生データ読み取り：読み取ったCSVデータをエンティティに変換。 */
+	private final ItemProcessor<CsvTeamUserTaskProgress, TeamUserTaskProgress> csvTeamUserTaskProgressProcessor;
+	/** 受講生データ読み取り：エンティティをDBに登録。 */
+	private final ItemWriter<TeamUserTaskProgress> csvTeamUserTaskProgressWriter;
+
+	/** 受講生データ読み取り：受講生データをCSVファイルから読み取る。 */
+	private final RepositoryItemReader<TeamUserTaskProgress> dbTeamUserTaskProgressReader;
+	/** 受講生データ読み取り：読み取ったCSVデータをエンティティに変換。 */
+	private final ItemProcessor<TeamUserTaskProgress, TeamUsers> dbTeamUsersProcessor;
+	/** 受講生データ読み取り：エンティティをDBに登録。 */
+	private final ItemWriter<TeamUsers> dbTeamUsersWriter;
+
+	/**
+	 * [chunk]課題データ読み取りステップ。
+	 * @return
+	 */
 	@Bean
-	Step step1() {
+	Step csvTasksImportStep() {
 		// Builderの取得
-		return stepBuilderFactory.get("SampleChunkStep1")
-			.<CsvTasks, Tasks>chunk(10)		// チャンクの設定
-			.reader(csvTasksReader) 		// readerセット
-			.processor(csvTasksProcessor) 	// processorセット
-			.writer(csvTasksWriter)			// writerセット
-			.build(); 						// Stepの生成
+		return stepBuilderFactory.get("csvTasksImportStep")
+			.<CsvTasks, Tasks>chunk(CHUNK_SIZE)
+			.reader(csvTasksReader)
+			.processor(csvTasksProcessor)
+			.writer(csvTasksWriter)
+			.build();
 	}
 
-	// ChunkのStepを生成
+	/**
+	 * [chunk]受講生データ読み取りステップ。
+	 * @return
+	 */
 	@Bean
-	Step step2() {
+	Step csvTeamUserTaskProgressStep() {
 		// Builderの取得
-		return stepBuilderFactory.get("SampleChunkStep2")
-			.<CsvTeamUserTaskProgress, TeamUserTaskProgress>chunk(10)	// チャンクの設定
-			.reader(csvTeamUserTaskProgressReader) 						// readerセット
-			.processor(csvTeamUserTaskProgressProcessor) 				// processorセット
-			.writer(csvTeamUserTaskProgressWriter)						// writerセット
-			.build(); 													// Stepの生成
+		return stepBuilderFactory.get("csvTeamUserTaskProgressImportStep")
+			.<CsvTeamUserTaskProgress, TeamUserTaskProgress>chunk(CHUNK_SIZE)
+			.reader(csvTeamUserTaskProgressReader)
+			.processor(csvTeamUserTaskProgressProcessor)
+			.writer(csvTeamUserTaskProgressWriter)
+			.build();
 	}
 
-	// Jobを生成
+	/**
+	 * [chunk]受講生データ読み取りステップ。
+	 * @return
+	 */
+	@Bean
+	Step dbTeamUsersStep() {
+		// Builderの取得
+		return stepBuilderFactory.get("dbTeamUsersStep")
+			.<TeamUserTaskProgress, TeamUsers>chunk(CHUNK_SIZE)
+			.reader(dbTeamUserTaskProgressReader)
+			.processor(dbTeamUsersProcessor)
+			.writer(dbTeamUsersWriter)
+			.build();
+	}
+
+	/**
+	 * [job]バッチメイン処理。
+	 * @return
+	 */
 	@Bean
 	Job job() {
-		return jobBuilderFactory.get("SampleJob")
-				.start(step1())
-				.next(step2())
+		return jobBuilderFactory.get("paizaLearnTrackJob")
+				.start(csvTasksImportStep())
+				.next(csvTeamUserTaskProgressStep())
+				.next(dbTeamUsersStep())
 				.build();
 	}
 }

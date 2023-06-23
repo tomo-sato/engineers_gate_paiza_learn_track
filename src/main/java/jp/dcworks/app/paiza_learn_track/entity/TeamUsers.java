@@ -32,6 +32,6 @@ public class TeamUsers extends EntityBase {
 	private String emailAddress;
 
 	/** 名前 */
-	@Column(name = "name", nullable = false)
+	@Column(name = "name", nullable = true)
 	private String name;
 }

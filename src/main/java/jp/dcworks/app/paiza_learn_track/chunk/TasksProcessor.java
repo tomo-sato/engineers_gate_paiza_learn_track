@@ -25,7 +25,7 @@ public class TasksProcessor implements ItemProcessor<CsvTasks, Tasks> {
 
 	@Override
 	public Tasks process(CsvTasks item) throws Exception {
-		log.info("Processor:{}", item.toString());
+		log.info("TasksProcessor:{}", item);
 
 		// DB保存形式のエンティティに変換。
 		Tasks teamUserTaskProgress = teamUserTaskProgressService.convert(item);

@@ -21,9 +21,13 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class CsvReaderConfig {
 
+	/**
+	 *　受講生データをCSVファイルから読み取る。
+	 * @return
+	 */
 	@Bean
 	@StepScope
-	FlatFileItemReader<CsvTeamUserTaskProgress> readTeamUserTaskProgress() {
+	FlatFileItemReader<CsvTeamUserTaskProgress> readCsvTeamUserTaskProgress() {
 
 		FlatFileItemReader<CsvTeamUserTaskProgress> builder = new FlatFileItemReaderBuilder<CsvTeamUserTaskProgress>()
 				.name("CsvTeamUserTaskProgress")
@@ -52,6 +56,10 @@ public class CsvReaderConfig {
 		return builder;
 	}
 
+	/**
+	 *　課題データをCSVファイルから読み取る。
+	 * @return
+	 */
 	@Bean
 	@StepScope
 	FlatFileItemReader<CsvTasks> readTasks() {

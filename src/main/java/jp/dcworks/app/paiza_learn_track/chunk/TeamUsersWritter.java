@@ -7,29 +7,29 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jp.dcworks.app.paiza_learn_track.entity.Tasks;
-import jp.dcworks.app.paiza_learn_track.service.TasksService;
+import jp.dcworks.app.paiza_learn_track.entity.TeamUsers;
+import jp.dcworks.app.paiza_learn_track.service.TeamUsersService;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * tasks　Writterクラス。
+ * team_users　Writterクラス。
  *
  * @author tomo-sato
  */
 @Component
 @StepScope
 @Log4j2
-public class TasksWritter implements ItemWriter<Tasks> {
+public class TeamUsersWritter implements ItemWriter<TeamUsers> {
 
 	@Autowired
-	private TasksService teamUserTaskProgressService;
+	private TeamUsersService teamUsersService;
 
 	@Override
-	public void write(List<? extends Tasks> items) throws Exception {
-		log.info("TasksWritter:{}", items);
+	public void write(List<? extends TeamUsers> items) throws Exception {
+		log.info("TeamUsersWritter:{}", items);
 		log.info("=========");
 
 		// データ登録を行う。
-		teamUserTaskProgressService.saveAll(items);
+		teamUsersService.saveAll(items);
 	}
 }

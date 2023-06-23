@@ -19,14 +19,14 @@ import lombok.extern.log4j.Log4j2;
 @Component
 @StepScope
 @Log4j2
-public class TeamUserTaskWritter implements ItemWriter<TeamUserTaskProgress> {
+public class TeamUserTaskProgressWritter implements ItemWriter<TeamUserTaskProgress> {
 
 	@Autowired
 	private TeamUserTaskProgressService teamUserTaskProgressService;
 
 	@Override
 	public void write(List<? extends TeamUserTaskProgress> items) throws Exception {
-		log.info("writer:{}", items);
+		log.info("TeamUserTaskProgressWritter:{}", items);
 		log.info("=========");
 
 		// データ登録を行う。

@@ -18,14 +18,14 @@ import lombok.extern.log4j.Log4j2;
 @Component
 @StepScope
 @Log4j2
-public class TeamUserTaskProcessor implements ItemProcessor<CsvTeamUserTaskProgress, TeamUserTaskProgress> {
+public class TeamUserTaskProgressProcessor implements ItemProcessor<CsvTeamUserTaskProgress, TeamUserTaskProgress> {
 
 	@Autowired
 	private TeamUserTaskProgressService teamUserTaskProgressService;
 
 	@Override
 	public TeamUserTaskProgress process(CsvTeamUserTaskProgress item) throws Exception {
-		log.info("Processor:{}", item.toString());
+		log.info("TeamUserTaskProgressProcessor:{}", item);
 
 		// DB保存形式のエンティティに変換。
 		TeamUserTaskProgress teamUserTaskProgress = teamUserTaskProgressService.convert(item);
