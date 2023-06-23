@@ -52,11 +52,11 @@ public class BatchMainConfig {
 	/** 受講生データ読み取り：エンティティをDBに登録。 */
 	private final ItemWriter<TeamUserTaskProgress> csvTeamUserTaskProgressWriter;
 
-	/** 受講生データ読み取り：受講生データをCSVファイルから読み取る。 */
+	/** 受講生メールアドレス読み取り：受講生データをDBから読み取る。 */
 	private final MyBatisPagingItemReader<String> dbTeamUserTaskProgressReader;
-	/** 受講生データ読み取り：読み取ったCSVデータをエンティティに変換。 */
+	/** 受講生メールアドレス読み取り：読み取ったDBデータをエンティティに変換。 */
 	private final ItemProcessor<String, TeamUsers> dbTeamUsersProcessor;
-	/** 受講生データ読み取り：エンティティをDBに登録。 */
+	/** 受講生メールアドレス読み取り：エンティティをDBに登録。 */
 	private final ItemWriter<TeamUsers> dbTeamUsersWriter;
 
 	/**
@@ -90,7 +90,7 @@ public class BatchMainConfig {
 	}
 
 	/**
-	 * [chunk]受講生データ読み取りステップ。
+	 * [chunk]受講生メールアドレス読み取りステップ。
 	 * @return
 	 */
 	@Bean
@@ -111,9 +111,9 @@ public class BatchMainConfig {
 	@Bean
 	Job job() {
 		return jobBuilderFactory.get("paizaLearnTrackJob")
-				.start(csvTasksImportStep())
-				.next(csvTeamUserTaskProgressStep())
-				.next(dbTeamUsersStep())
-				.build();
+			.start(csvTasksImportStep())
+			.next(csvTeamUserTaskProgressStep())
+			.next(dbTeamUsersStep())
+			.build();
 	}
 }
