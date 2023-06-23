@@ -11,6 +11,8 @@
 		GROUP BY
 			email_address
 		ORDER BY
-			email_address;
+			email_address
+		LIMIT #{_pagesize}
+		OFFSET #{_skiprows};
 	</select>
 </mapper>
