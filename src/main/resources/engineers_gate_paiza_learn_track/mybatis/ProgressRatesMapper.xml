@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.dcworks.app.paiza_learn_track.mybatis.ProgressRatesMapper">
+
+	<resultMap id="ProgressRatesMap" type="jp.dcworks.app.paiza_learn_track.mybatis.entity.ProgressRatesMap">
+		<result property="teamUsersId" column="id" />
+		<result property="emailAddress" column="email_address" />
+		<result property="courseId" column="course_id" />
+		<result property="courseName" column="course_name" />
+		<result property="lessonId" column="lesson_id" />
+		<result property="lessonName" column="lesson_name" />
+		<result property="achievedLearningHours" column="achieved_learning_hours" />
+		<result property="totalLearningHours" column="total_learning_hours" />
+		<result property="taskProgressRate" column="task_progress_rate" />
+	</resultMap>
+
+	<!-- 課題進捗率を算出する。 -->
+	<select id="getProgressRate" resultMap="ProgressRatesMap">
+		SELECT
+			t1.id
+			, t1.email_address
+			, t1.course_id
+			, t1.course_name
+			, t1.lesson_id
+			, t1.lesson_name
+			, t1.achieved_learning_hours
+			, t2.total_learning_hours
+			, (t1.achieved_learning_hours / t2.total_learning_hours) * 100 as task_progress_rate
+		FROM
+			(
+				SELECT
+					tu.id
+					, tu.email_address
+					, t.course_id
+					, t.course_name
+					, t.lesson_id
+					, t.lesson_name
+					, sum(t.learning_minutes) / 60 as achieved_learning_hours
+				FROM team_user_task_progress tutp
+					LEFT JOIN team_users tu ON
+						tu.email_address = tutp.email_address
+					INNER JOIN tasks t ON
+						t.chapter_id = tutp.chapter_id
+				GROUP BY
+					tu.id
+					, t.course_id
+					, t.course_name
+					, t.lesson_id
+					, t.lesson_name
+			) t1
+			LEFT JOIN
+				(
+					SELECT
+						t.course_id
+						, t.course_name
+						, t.lesson_id
+						, t.lesson_name
+						, sum(t.learning_minutes) / 60 as total_learning_hours
+					FROM
+						tasks t
+					GROUP BY
+						t.course_id
+						, t.course_name
+						, t.lesson_id
+						, t.lesson_name
+				) t2 ON
+					t2.course_id = t1.course_id
+					AND t2.lesson_id = t1.lesson_id
+		ORDER BY
+			t1.id
+			, t1.course_id
+			, t1.lesson_id
+		LIMIT #{_pagesize}
+		OFFSET #{_skiprows};
+	</select>
+</mapper>

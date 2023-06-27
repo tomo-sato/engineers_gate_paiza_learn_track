@@ -30,8 +30,8 @@
 55,JavaScript体験編,javascript-trial-1,JavaScript体験編1: JavaScriptをはじめよう,63012,同じ処理を何度も繰り返す,1,1,
 55,JavaScript体験編,javascript-trial-1,JavaScript体験編1: JavaScriptをはじめよう,63013,複数のデータを受け取る,1,1,
 55,JavaScript体験編,javascript-trial-1,JavaScript体験編1: JavaScriptをはじめよう,63014,複数のデータを分類する,1,1,
-,jQuery（※progate）,,,1000001,,,2,180
-,オリジナル課題（HTML）,,,1000002,,,2,720
+9055,jQuery（※progate）,,,1000001,,,2,180
+9055,オリジナル課題（HTML）,,,1000002,,,2,720
 35,Git入門編,beginner-git1,Git入門編１：Gitの基本操作を身に付けよう,17000,バージョン管理を理解しよう,0,1,
 35,Git入門編,beginner-git1,Git入門編１：Gitの基本操作を身に付けよう,17001,リポジトリを作ろう,3,1,
 35,Git入門編,beginner-git1,Git入門編１：Gitの基本操作を身に付けよう,17002,リポジトリにファイルを追加してみよう,1,1,
@@ -44,7 +44,7 @@
 35,Git入門編,beginner-git1,Git入門編１：Gitの基本操作を身に付けよう,17009,衝突を解決しよう,1,1,
 35,Git入門編,beginner-git1,Git入門編１：Gitの基本操作を身に付けよう,17010,プロジェクトをクローンしよう,1,1,
 35,Git入門編,beginner-git1,Git入門編１：Gitの基本操作を身に付けよう,17011,プロジェクトの変更を取り込む,1,1,
-,オリジナル課題（Git）,,,1000003,,,2,240
+9035,オリジナル課題（Git）,,,1000003,,,2,240
 53,Java体験編,java-trial-1,Java体験編1: Javaをはじめよう,61000,プログラミングとは,0,1,
 53,Java体験編,java-trial-1,Java体験編1: Javaをはじめよう,61001,はじめてのプログラミング,3,1,
 53,Java体験編,java-trial-1,Java体験編1: Javaをはじめよう,61002,間違いやすいポイント,4,1,
@@ -141,7 +141,7 @@
 5,Java入門編,beginner-java10,Java入門編10:例外処理を理解しよう,6140,例外クラスのクラス構成を理解しよう,,1,
 5,Java入門編,beginner-java10,Java入門編10:例外処理を理解しよう,6141,throwsで例外処理を呼び出し元に任せよう,,1,
 5,Java入門編,beginner-java10,Java入門編10:例外処理を理解しよう,6142,throwとtry-catchで再スローしよう,,1,
-,オリジナル課題（Java）,,,1000004,,,2,960
+9005,オリジナル課題（Java）,,,1000004,,,2,960
 65,新・SQL入門編,sql-new-primer-1,新・SQL入門編1: SQLをはじめよう,73000,データベースとは,,1,
 65,新・SQL入門編,sql-new-primer-1,新・SQL入門編1: SQLをはじめよう,73001,SQLとは,,1,
 65,新・SQL入門編,sql-new-primer-1,新・SQL入門編1: SQLをはじめよう,73002,MySQLへの接続と切断,,1,
@@ -203,7 +203,7 @@
 65,新・SQL入門編,sql-new-primer-8,新・SQL入門編8: DELETE文を理解しよう,73700,レコードを削除する (DELETE文),,1,
 65,新・SQL入門編,sql-new-primer-8,新・SQL入門編8: DELETE文を理解しよう,73701,"すべてのレコードを削除する (DELETE文, TRUNCATE文)",,1,
 65,新・SQL入門編,sql-new-primer-9,新・SQL入門編9: CREATE DATABASE文を理解しよう,73800,データベースを作成する (CREATE DATABASE文),,1,
-,オリジナル課題（SQL）,,,1000005,,,2,480
+9065,オリジナル課題（SQL）,,,1000005,,,2,480
 36,Webアプリ開発入門 Servlet/JSP編,beginner-servlet1,Webアプリ開発入門 Servlet/JSP編1: JavaでWebアプリケーションを作ろう,6020,Webアプリの初歩を理解しよう,,1,
 36,Webアプリ開発入門 Servlet/JSP編,beginner-servlet1,Webアプリ開発入門 Servlet/JSP編1: JavaでWebアプリケーションを作ろう,6021,Tomcatを呼び出してみよう,,1,
 36,Webアプリ開発入門 Servlet/JSP編,beginner-servlet1,Webアプリ開発入門 Servlet/JSP編1: JavaでWebアプリケーションを作ろう,6022,Hello Worldをコンパイルしよう,,1,
@@ -248,8 +248,8 @@
 36,Webアプリ開発入門 Servlet/JSP編,beginner-servlet4,Webアプリ開発入門 Servlet/JSP編4: Javaでメモ帳アプリを作ろう,6108,指定のメモを削除する,,1,
 36,Webアプリ開発入門 Servlet/JSP編,beginner-servlet4,Webアプリ開発入門 Servlet/JSP編4: Javaでメモ帳アプリを作ろう,6109,新規メモを作成する,,1,
 36,Webアプリ開発入門 Servlet/JSP編,beginner-servlet4,Webアプリ開発入門 Servlet/JSP編4: Javaでメモ帳アプリを作ろう,6110,新規メモを保存する,,1,
-,オリジナル課題（Webアプリ1_Servlet/JSP）,,,1000006,,,2,1440
-,オリジナル課題（Webアプリ2_SpringBoot）,,,1000007,,,2,6000
+9036,オリジナル課題（Webアプリ1_Servlet/JSP）,,,1000006,,,2,1440
+9036,オリジナル課題（Webアプリ2_SpringBoot）,,,1000007,,,2,6000
 32,シェルコマンド入門編,shell-command-primer-01,シェルコマンド入門編1：シェルコマンドの基本を身に付けよう,16000,シェルコマンドの概要を理解しよう,,1,
 32,シェルコマンド入門編,shell-command-primer-01,シェルコマンド入門編1：シェルコマンドの基本を身に付けよう,16001,シェルを呼び出してみよう,,1,
 32,シェルコマンド入門編,shell-command-primer-01,シェルコマンド入門編1：シェルコマンドの基本を身に付けよう,16002,ファイル一覧を表示しよう,,1,

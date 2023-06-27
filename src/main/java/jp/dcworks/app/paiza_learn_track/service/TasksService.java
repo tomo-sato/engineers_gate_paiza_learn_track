@@ -21,9 +21,9 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class TasksService {
 
-	/** チャプター時間（分） */
+	/** チャプター時間（分）：1チャプター約6分計算。 */
 	public static final int CHAPTER_DURATION_MINUTES = 6;
-	/** 問題回答時間（分） */
+	/** 問題回答時間（分）：1問約15分計算。 */
 	public static final int QUESTION_ANSWER_TIME_MINUTES = 15;
 
 	/** リポジトリインターフェース。 */

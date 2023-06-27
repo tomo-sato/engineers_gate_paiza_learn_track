@@ -14,9 +14,11 @@ import org.springframework.context.annotation.Configuration;
 
 import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
+import jp.dcworks.app.paiza_learn_track.entity.ProgressRates;
 import jp.dcworks.app.paiza_learn_track.entity.Tasks;
 import jp.dcworks.app.paiza_learn_track.entity.TeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.entity.TeamUsers;
+import jp.dcworks.app.paiza_learn_track.mybatis.entity.ProgressRatesMap;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -58,6 +60,13 @@ public class BatchMainConfig {
 	private final ItemProcessor<String, TeamUsers> dbTeamUsersProcessor;
 	/** 受講生メールアドレス読み取り：エンティティをDBに登録。 */
 	private final ItemWriter<TeamUsers> dbTeamUsersWriter;
+
+	/** 課題進捗率読み取り：課題進捗率データをDBから読み取る。 */
+	private final MyBatisPagingItemReader<ProgressRatesMap> dbProgressRatesReader;
+	/** 課題進捗率読み取：読み取ったDBデータをエンティティに変換。 */
+	private final ItemProcessor<ProgressRatesMap, ProgressRates> dbProgressRatesProcessor;
+	/** 課題進捗率読み取：エンティティをDBに登録。 */
+	private final ItemWriter<ProgressRates> dbProgressRatesWriter;
 
 	/**
 	 * [chunk]課題データ読み取りステップ。
@@ -105,6 +114,21 @@ public class BatchMainConfig {
 	}
 
 	/**
+	 * [chunk]課題進捗率読み取りステップ。
+	 * @return
+	 */
+	@Bean
+	Step dbProgressRatesStep() {
+		// Builderの取得
+		return stepBuilderFactory.get("dbProgressRatesStep")
+			.<ProgressRatesMap, ProgressRates>chunk(CHUNK_SIZE)
+			.reader(dbProgressRatesReader)
+			.processor(dbProgressRatesProcessor)
+			.writer(dbProgressRatesWriter)
+			.build();
+	}
+
+	/**
 	 * [job]バッチメイン処理。
 	 * @return
 	 */
@@ -114,6 +138,7 @@ public class BatchMainConfig {
 			.start(csvTasksImportStep())
 			.next(csvTeamUserTaskProgressStep())
 			.next(dbTeamUsersStep())
+			.next(dbProgressRatesStep())
 			.build();
 	}
 }
