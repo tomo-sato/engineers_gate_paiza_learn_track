@@ -41,6 +41,8 @@
 						tu.email_address = tutp.email_address
 					INNER JOIN tasks t ON
 						t.chapter_id = tutp.chapter_id
+				WHERE
+					tutp.report_date = #{report_date}
 				GROUP BY
 					tu.id
 					, t.course_id

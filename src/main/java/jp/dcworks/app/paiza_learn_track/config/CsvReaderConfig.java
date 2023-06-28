@@ -10,7 +10,6 @@ import org.springframework.core.io.FileSystemResource;
 
 import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * CSV読み込み定義クラス。
@@ -18,7 +17,6 @@ import lombok.extern.log4j.Log4j2;
  * @author tomo-sato
  */
 @Configuration
-@Log4j2
 public class CsvReaderConfig {
 
 	/**
@@ -27,7 +25,7 @@ public class CsvReaderConfig {
 	 */
 	@Bean
 	@StepScope
-	FlatFileItemReader<CsvTeamUserTaskProgress> readCsvTeamUserTaskProgress() {
+	FlatFileItemReader<CsvTeamUserTaskProgress> csvTeamUserTaskProgressReader() {
 
 		FlatFileItemReader<CsvTeamUserTaskProgress> builder = new FlatFileItemReaderBuilder<CsvTeamUserTaskProgress>()
 				.name("CsvTeamUserTaskProgress")
@@ -62,7 +60,7 @@ public class CsvReaderConfig {
 	 */
 	@Bean
 	@StepScope
-	FlatFileItemReader<CsvTasks> readTasks() {
+	FlatFileItemReader<CsvTasks> csvTasksReader() {
 
 		FlatFileItemReader<CsvTasks> builder = new FlatFileItemReaderBuilder<CsvTasks>()
 				.name("CsvTeamUserTaskProgress")
