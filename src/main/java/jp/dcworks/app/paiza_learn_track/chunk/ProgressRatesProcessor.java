@@ -37,7 +37,7 @@ public class ProgressRatesProcessor implements ItemProcessor<ProgressRatesMap, P
 	public ProgressRates process(ProgressRatesMap item) throws Exception {
 		log.info("ProgressRatesProcessor:{}, {}", item, this.reportDateStr);
 
-		SimpleDateFormat sdf = new SimpleDateFormat(AppConst.DATE_FORMAT);
+		SimpleDateFormat sdf = new SimpleDateFormat(AppConst.FORMAT_DATE);
 		Date reportDate = sdf.parse(reportDateStr);
 
 		// DB保存形式のエンティティに変換。

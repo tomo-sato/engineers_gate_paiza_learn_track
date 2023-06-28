@@ -37,7 +37,7 @@ public class TeamUserTaskProgressProcessor implements ItemProcessor<CsvTeamUserT
 	public TeamUserTaskProgress process(CsvTeamUserTaskProgress item) throws Exception {
 		log.info("TeamUserTaskProgressProcessor:{}, {}", item, this.reportDateStr);
 
-		SimpleDateFormat sdf = new SimpleDateFormat(AppConst.DATE_FORMAT);
+		SimpleDateFormat sdf = new SimpleDateFormat(AppConst.FORMAT_DATE);
 		Date reportDate = sdf.parse(reportDateStr);
 
 		// DB保存形式のエンティティに変換。

@@ -14,7 +14,9 @@ public class AppConst {
 	public static final String EXECUTION_CONTEXT_KEY_REPORTDATE = "reportDate";
 
 	/** 日付フォーマット。 */
-	public static final String DATE_FORMAT = "yyyy-MM-dd";
+	public static final String FORMAT_DATE = "yyyy-MM-dd";
+	/** 日時フォーマット。 */
+	public static final String FORMAT_DATETIME = "yyyy-MM-dd HH:mm:ss Z";
 
 	/** チャプター時間（分）：1チャプター約6分計算。 */
 	public static final int CHAPTER_DURATION_MINUTES = 6;

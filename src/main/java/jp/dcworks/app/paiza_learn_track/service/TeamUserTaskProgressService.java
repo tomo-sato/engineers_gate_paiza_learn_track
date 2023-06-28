@@ -8,6 +8,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jp.dcworks.app.paiza_learn_track.AppConst;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.entity.TeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.repository.TeamUserTaskProgressRepository;
@@ -44,8 +45,8 @@ public class TeamUserTaskProgressService {
 		teamUserTaskProgress.setChapterId(NumberUtil.toInteger(csvTeamUserTaskProgress.getChapterId()));
 		teamUserTaskProgress.setChapterName(csvTeamUserTaskProgress.getChapterName());
 		teamUserTaskProgress.setChapterCompletionFlag(csvTeamUserTaskProgress.getChapterCompletionFlag());
-		teamUserTaskProgress.setChapterStartDatetime(DateUtils.parseDate(csvTeamUserTaskProgress.getChapterStartDatetime(), "yyyy-MM-dd HH:mm:ss Z"));
-		teamUserTaskProgress.setChapterLastAccessDatetime(DateUtils.parseDate(csvTeamUserTaskProgress.getChapterLastAccessDatetime(), "yyyy-MM-dd HH:mm:ss Z"));
+		teamUserTaskProgress.setChapterStartDatetime(DateUtils.parseDate(csvTeamUserTaskProgress.getChapterStartDatetime(), AppConst.FORMAT_DATETIME));
+		teamUserTaskProgress.setChapterLastAccessDatetime(DateUtils.parseDate(csvTeamUserTaskProgress.getChapterLastAccessDatetime(), AppConst.FORMAT_DATETIME));
 		teamUserTaskProgress.setReportDate(reportDate);
 		return teamUserTaskProgress;
 	}
