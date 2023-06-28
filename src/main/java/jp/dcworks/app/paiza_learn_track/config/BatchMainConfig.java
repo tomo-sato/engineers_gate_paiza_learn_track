@@ -1,17 +1,25 @@
 package jp.dcworks.app.paiza_learn_track.config;
 
+import java.util.Date;
+
 import org.mybatis.spring.batch.MyBatisPagingItemReader;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import jp.dcworks.app.paiza_learn_track.AppConst;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.entity.ProgressRates;
@@ -19,6 +27,7 @@ import jp.dcworks.app.paiza_learn_track.entity.Tasks;
 import jp.dcworks.app.paiza_learn_track.entity.TeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.entity.TeamUsers;
 import jp.dcworks.app.paiza_learn_track.mybatis.entity.ProgressRatesMap;
+import jp.dcworks.app.paiza_learn_track.service.TasksService;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -30,6 +39,9 @@ import lombok.RequiredArgsConstructor;
 @EnableBatchProcessing
 @RequiredArgsConstructor
 public class BatchMainConfig {
+
+	@Autowired
+	private TasksService tasksService;
 
 	/** チャンクサイズ */
 	private static final int CHUNK_SIZE = 10;
@@ -76,6 +88,19 @@ public class BatchMainConfig {
 	Step csvTasksImportStep() {
 		// Builderの取得
 		return stepBuilderFactory.get("csvTasksImportStep")
+			.listener(new StepExecutionListener() {
+
+				@Override
+				public void beforeStep(StepExecution stepExecution) {
+					// データ削除
+					tasksService.truncate();
+				}
+
+				@Override
+				public ExitStatus afterStep(StepExecution stepExecution) {
+					return null;
+				}
+			})
 			.<CsvTasks, Tasks>chunk(CHUNK_SIZE)
 			.reader(csvTasksReader)
 			.processor(csvTasksProcessor)
@@ -91,6 +116,19 @@ public class BatchMainConfig {
 	Step csvTeamUserTaskProgressStep() {
 		// Builderの取得
 		return stepBuilderFactory.get("csvTeamUserTaskProgressImportStep")
+			.listener(new StepExecutionListener() {
+
+				@Override
+				public void beforeStep(StepExecution stepExecution) {
+					// 集計日を取得
+					stepExecution.getExecutionContext().put(AppConst.EXECUTION_CONTEXT_KEY_REPORTDATE, new Date());
+				}
+
+				@Override
+				public ExitStatus afterStep(StepExecution stepExecution) {
+					return null;
+				}
+			})
 			.<CsvTeamUserTaskProgress, TeamUserTaskProgress>chunk(CHUNK_SIZE)
 			.reader(csvTeamUserTaskProgressReader)
 			.processor(csvTeamUserTaskProgressProcessor)
@@ -121,6 +159,19 @@ public class BatchMainConfig {
 	Step dbProgressRatesStep() {
 		// Builderの取得
 		return stepBuilderFactory.get("dbProgressRatesStep")
+			.listener(new StepExecutionListener() {
+
+				@Override
+				public void beforeStep(StepExecution stepExecution) {
+					// 集計日を取得
+					stepExecution.getExecutionContext().put(AppConst.EXECUTION_CONTEXT_KEY_REPORTDATE, new Date());
+				}
+
+				@Override
+				public ExitStatus afterStep(StepExecution stepExecution) {
+					return null;
+				}
+			})
 			.<ProgressRatesMap, ProgressRates>chunk(CHUNK_SIZE)
 			.reader(dbProgressRatesReader)
 			.processor(dbProgressRatesProcessor)
@@ -135,6 +186,7 @@ public class BatchMainConfig {
 	@Bean
 	Job job() {
 		return jobBuilderFactory.get("paizaLearnTrackJob")
+			.incrementer(new RunIdIncrementer())
 			.start(csvTasksImportStep())
 			.next(csvTeamUserTaskProgressStep())
 			.next(dbTeamUsersStep())

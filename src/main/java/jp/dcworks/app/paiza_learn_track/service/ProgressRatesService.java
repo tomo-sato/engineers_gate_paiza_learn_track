@@ -1,6 +1,5 @@
 package jp.dcworks.app.paiza_learn_track.service;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -27,27 +26,11 @@ public class ProgressRatesService {
 
 	/**
 	 * データコンバーター。
+	 * @param targetDate
 	 * @param progressRatesMap
 	 * @return
 	 */
-	public ProgressRates convert(ProgressRatesMap progressRatesMap) {
-
-		// 現在の日付と時刻を取得
-		Date date = new Date();
-
-		// Calendarオブジェクトを作成し、Dateから再生成する
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-
-		// 年月日の情報を取得
-		int year = calendar.get(Calendar.YEAR);
-		int month = calendar.get(Calendar.MONTH);
-		int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-		// 年月日だけで新しいDateオブジェクトを再生成
-		Calendar newCalendar = Calendar.getInstance();
-		newCalendar.set(year, month, day, 0, 0, 0);
-		Date nowDate = newCalendar.getTime();
+	public ProgressRates convert(Date targetDate, ProgressRatesMap progressRatesMap) {
 
 		ProgressRates progressRates = new ProgressRates();
 		progressRates.setTeamUsersId(progressRatesMap.getTeamUsersId());
@@ -55,7 +38,7 @@ public class ProgressRatesService {
 		progressRates.setCourseName(progressRatesMap.getCourseName());
 		progressRates.setLessonId(progressRatesMap.getLessonId());
 		progressRates.setLessonName(progressRatesMap.getLessonName());
-		progressRates.setReportDate(nowDate);
+		progressRates.setReportDate(targetDate);
 		progressRates.setAchievedLearningHours(progressRatesMap.getAchievedLearningHours());
 		progressRates.setTotalLearningHours(progressRatesMap.getTotalLearningHours());
 		progressRates.setTaskProgressRate(progressRatesMap.getTaskProgressRate());

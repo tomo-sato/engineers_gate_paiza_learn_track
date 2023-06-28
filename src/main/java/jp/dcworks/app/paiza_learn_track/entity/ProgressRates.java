@@ -49,10 +49,6 @@ public class ProgressRates extends EntityBase {
 	@Column(name = "lesson_name", nullable = false)
 	private String lessonName;
 
-	/** 集計日（yyyy-MM-dd） */
-	@Column(name = "report_date", nullable = false)
-	private Date reportDate;
-
 	/** 学習時間実績（時） */
 	@Column(name = "achieved_learning_hours", nullable = false)
 	private Double achievedLearningHours;
@@ -64,4 +60,8 @@ public class ProgressRates extends EntityBase {
 	/** 課題進捗率（%）：『（「学習時間実績（時）」 / 「学習時間合計（時）） * 100」』の算出結果を登録。 */
 	@Column(name = "task_progress_rate", nullable = false)
 	private Double taskProgressRate;
+
+	/** 集計日（yyyy-MM-dd） */
+	@Column(name = "report_date", nullable = false)
+	private Date reportDate;
 }

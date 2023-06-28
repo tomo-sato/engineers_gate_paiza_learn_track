@@ -1,6 +1,7 @@
 package jp.dcworks.app.paiza_learn_track.service;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -28,11 +29,12 @@ public class TeamUserTaskProgressService {
 
 	/**
 	 * データコンバーター。
+	 * @param reportDate
 	 * @param csvTeamUserTaskProgress
 	 * @return
 	 * @throws ParseException
 	 */
-	public TeamUserTaskProgress convert(CsvTeamUserTaskProgress csvTeamUserTaskProgress) throws ParseException {
+	public TeamUserTaskProgress convert(Date reportDate, CsvTeamUserTaskProgress csvTeamUserTaskProgress) throws ParseException {
 		TeamUserTaskProgress teamUserTaskProgress = new TeamUserTaskProgress();
 		teamUserTaskProgress.setEmailAddress(csvTeamUserTaskProgress.getEmailAddress());
 		teamUserTaskProgress.setCourseId(NumberUtil.toInteger(csvTeamUserTaskProgress.getCourseId()));
@@ -46,6 +48,7 @@ public class TeamUserTaskProgressService {
 		teamUserTaskProgress.setChapterCompletionFlag(csvTeamUserTaskProgress.getChapterCompletionFlag());
 		teamUserTaskProgress.setChapterStartDatetime(DateUtils.parseDate(csvTeamUserTaskProgress.getChapterStartDatetime(), "yyyy-MM-dd HH:mm:ss Z"));
 		teamUserTaskProgress.setChapterLastAccessDatetime(DateUtils.parseDate(csvTeamUserTaskProgress.getChapterLastAccessDatetime(), "yyyy-MM-dd HH:mm:ss Z"));
+		teamUserTaskProgress.setReportDate(reportDate);
 		return teamUserTaskProgress;
 	}
 

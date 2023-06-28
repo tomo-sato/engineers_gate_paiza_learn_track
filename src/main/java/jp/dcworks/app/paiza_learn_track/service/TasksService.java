@@ -3,8 +3,12 @@ package jp.dcworks.app.paiza_learn_track.service;
 import java.text.ParseException;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
 import jp.dcworks.app.paiza_learn_track.entity.Tasks;
@@ -25,6 +29,9 @@ public class TasksService {
 	public static final int CHAPTER_DURATION_MINUTES = 6;
 	/** 問題回答時間（分）：1問約15分計算。 */
 	public static final int QUESTION_ANSWER_TIME_MINUTES = 15;
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	/** リポジトリインターフェース。 */
 	@Autowired
@@ -65,5 +72,10 @@ public class TasksService {
 	 */
 	public void saveAll(List<? extends Tasks> itemsList) {
 		repository.saveAll(itemsList);
+	}
+
+	@Transactional
+	public void truncate() {
+		entityManager.createNativeQuery("TRUNCATE TABLE tasks").executeUpdate();
 	}
 }

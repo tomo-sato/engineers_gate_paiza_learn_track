@@ -76,4 +76,8 @@ public class TeamUserTaskProgress extends EntityBase {
 	/** チャプター最終受講日時 */
 	@Column(name = "chapter_last_access_datetime", nullable = false)
 	private Date chapterLastAccessDatetime;
+
+	/** 集計日（yyyy-MM-dd） */
+	@Column(name = "report_date", nullable = false)
+	private Date reportDate;
 }

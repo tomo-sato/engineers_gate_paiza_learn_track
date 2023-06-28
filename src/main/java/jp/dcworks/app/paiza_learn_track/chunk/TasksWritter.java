@@ -22,7 +22,7 @@ import lombok.extern.log4j.Log4j2;
 public class TasksWritter implements ItemWriter<Tasks> {
 
 	@Autowired
-	private TasksService teamUserTaskProgressService;
+	private TasksService tasksService;
 
 	@Override
 	public void write(List<? extends Tasks> items) throws Exception {
@@ -30,6 +30,6 @@ public class TasksWritter implements ItemWriter<Tasks> {
 		log.info("=========");
 
 		// データ登録を行う。
-		teamUserTaskProgressService.saveAll(items);
+		tasksService.saveAll(items);
 	}
 }

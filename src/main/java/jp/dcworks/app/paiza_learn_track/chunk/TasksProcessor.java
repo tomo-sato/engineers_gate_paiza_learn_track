@@ -21,14 +21,14 @@ import lombok.extern.log4j.Log4j2;
 public class TasksProcessor implements ItemProcessor<CsvTasks, Tasks> {
 
 	@Autowired
-	private TasksService teamUserTaskProgressService;
+	private TasksService tasksService;
 
 	@Override
 	public Tasks process(CsvTasks item) throws Exception {
 		log.info("TasksProcessor:{}", item);
 
 		// DB保存形式のエンティティに変換。
-		Tasks teamUserTaskProgress = teamUserTaskProgressService.convert(item);
+		Tasks teamUserTaskProgress = tasksService.convert(item);
 
 		return teamUserTaskProgress;
 	}
