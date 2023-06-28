@@ -1,7 +1,5 @@
 package jp.dcworks.app.paiza_learn_track.config;
 
-import java.util.Date;
-
 import org.mybatis.spring.batch.MyBatisPagingItemReader;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
@@ -19,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import jp.dcworks.app.paiza_learn_track.AppConst;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.entity.ProgressRates;
@@ -92,7 +89,7 @@ public class BatchMainConfig {
 
 				@Override
 				public void beforeStep(StepExecution stepExecution) {
-					// データ削除
+					// データクリーニング処理。（truncateでデータ削除。）
 					tasksService.truncate();
 				}
 
@@ -114,21 +111,9 @@ public class BatchMainConfig {
 	 */
 	@Bean
 	Step csvTeamUserTaskProgressStep() {
+
 		// Builderの取得
 		return stepBuilderFactory.get("csvTeamUserTaskProgressImportStep")
-			.listener(new StepExecutionListener() {
-
-				@Override
-				public void beforeStep(StepExecution stepExecution) {
-					// 集計日を取得
-					stepExecution.getExecutionContext().put(AppConst.EXECUTION_CONTEXT_KEY_REPORTDATE, new Date());
-				}
-
-				@Override
-				public ExitStatus afterStep(StepExecution stepExecution) {
-					return null;
-				}
-			})
 			.<CsvTeamUserTaskProgress, TeamUserTaskProgress>chunk(CHUNK_SIZE)
 			.reader(csvTeamUserTaskProgressReader)
 			.processor(csvTeamUserTaskProgressProcessor)
@@ -159,19 +144,6 @@ public class BatchMainConfig {
 	Step dbProgressRatesStep() {
 		// Builderの取得
 		return stepBuilderFactory.get("dbProgressRatesStep")
-			.listener(new StepExecutionListener() {
-
-				@Override
-				public void beforeStep(StepExecution stepExecution) {
-					// 集計日を取得
-					stepExecution.getExecutionContext().put(AppConst.EXECUTION_CONTEXT_KEY_REPORTDATE, new Date());
-				}
-
-				@Override
-				public ExitStatus afterStep(StepExecution stepExecution) {
-					return null;
-				}
-			})
 			.<ProgressRatesMap, ProgressRates>chunk(CHUNK_SIZE)
 			.reader(dbProgressRatesReader)
 			.processor(dbProgressRatesProcessor)
