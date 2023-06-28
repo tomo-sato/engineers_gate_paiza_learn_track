@@ -21,6 +21,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class ProgressRatesWritter implements ItemWriter<ProgressRates> {
 
+	/** 課題進捗率サービスクラス */
 	@Autowired
 	private ProgressRatesService progressRatesService;
 

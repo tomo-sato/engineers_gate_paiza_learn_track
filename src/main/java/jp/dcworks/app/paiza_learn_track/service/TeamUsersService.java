@@ -7,14 +7,12 @@ import org.springframework.stereotype.Service;
 
 import jp.dcworks.app.paiza_learn_track.entity.TeamUsers;
 import jp.dcworks.app.paiza_learn_track.repository.TeamUsersRepository;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * チームユーザー課題進捗サービスクラス。
  *
  * @author tomo-sato
  */
-@Log4j2
 @Service
 public class TeamUsersService {
 

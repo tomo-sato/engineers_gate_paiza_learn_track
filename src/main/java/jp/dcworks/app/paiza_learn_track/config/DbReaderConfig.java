@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import jp.dcworks.app.paiza_learn_track.AppConst;
 import jp.dcworks.app.paiza_learn_track.mybatis.entity.ProgressRatesMap;
 
 /**
@@ -27,7 +28,7 @@ public class DbReaderConfig {
 	private static final int PAGE_SIZE = 5;
 
 	/** 起動引数：集計日（yyyy-MM-dd） */
-	@Value("#{jobParameters['report_date']}")
+	@Value(AppConst.JOB_PARAMETERS_REPORT_DATE)
 	private String reportDateStr;
 
 	@Autowired

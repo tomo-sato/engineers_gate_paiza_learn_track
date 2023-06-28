@@ -21,6 +21,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class TeamUserTaskProgressWritter implements ItemWriter<TeamUserTaskProgress> {
 
+	/** チームユーザー課題進捗 */
 	@Autowired
 	private TeamUserTaskProgressService teamUserTaskProgressService;
 

@@ -21,6 +21,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class TasksWritter implements ItemWriter<Tasks> {
 
+	/** チームユーザー課題進捗サービスクラス */
 	@Autowired
 	private TasksService tasksService;
 

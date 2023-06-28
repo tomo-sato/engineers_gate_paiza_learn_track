@@ -10,25 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jp.dcworks.app.paiza_learn_track.AppConst;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
 import jp.dcworks.app.paiza_learn_track.entity.Tasks;
 import jp.dcworks.app.paiza_learn_track.repository.TasksRepository;
 import jp.dcworks.app.paiza_learn_track.util.NumberUtil;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * チームユーザー課題進捗サービスクラス。
  *
  * @author tomo-sato
  */
-@Log4j2
 @Service
 public class TasksService {
-
-	/** チャプター時間（分）：1チャプター約6分計算。 */
-	public static final int CHAPTER_DURATION_MINUTES = 6;
-	/** 問題回答時間（分）：1問約15分計算。 */
-	public static final int QUESTION_ANSWER_TIME_MINUTES = 15;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -50,7 +44,7 @@ public class TasksService {
 		int learningMinutes = NumberUtil.toInteger(csvTeamUserTaskProgress.getLearningMinutes(), 0).intValue();
 
 		if (taskTypesId == Tasks.TASK_TYPES_ID_PAIZA) {
-			learningMinutes = CHAPTER_DURATION_MINUTES + (QUESTION_ANSWER_TIME_MINUTES * exerciseNum);
+			learningMinutes = AppConst.CHAPTER_DURATION_MINUTES + (AppConst.QUESTION_ANSWER_TIME_MINUTES * exerciseNum);
 		}
 
 		Tasks teamUserTaskProgress = new Tasks();

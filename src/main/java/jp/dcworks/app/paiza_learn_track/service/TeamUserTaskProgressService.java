@@ -12,14 +12,12 @@ import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.entity.TeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.repository.TeamUserTaskProgressRepository;
 import jp.dcworks.app.paiza_learn_track.util.NumberUtil;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * チームユーザー課題進捗サービスクラス。
  *
  * @author tomo-sato
  */
-@Log4j2
 @Service
 public class TeamUserTaskProgressService {
 

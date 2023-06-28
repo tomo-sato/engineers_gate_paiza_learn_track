@@ -20,6 +20,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class TasksProcessor implements ItemProcessor<CsvTasks, Tasks> {
 
+	/** チームユーザー課題進捗サービスクラス */
 	@Autowired
 	private TasksService tasksService;
 

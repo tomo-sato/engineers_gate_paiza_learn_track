@@ -9,14 +9,12 @@ import org.springframework.stereotype.Service;
 import jp.dcworks.app.paiza_learn_track.entity.ProgressRates;
 import jp.dcworks.app.paiza_learn_track.mybatis.entity.ProgressRatesMap;
 import jp.dcworks.app.paiza_learn_track.repository.ProgressRatesRepository;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * 課題進捗率サービスクラス。
  *
  * @author tomo-sato
  */
-@Log4j2
 @Service
 public class ProgressRatesService {
 
@@ -26,11 +24,11 @@ public class ProgressRatesService {
 
 	/**
 	 * データコンバーター。
-	 * @param targetDate
+	 * @param reportDate 集計日
 	 * @param progressRatesMap
 	 * @return
 	 */
-	public ProgressRates convert(Date targetDate, ProgressRatesMap progressRatesMap) {
+	public ProgressRates convert(Date reportDate, ProgressRatesMap progressRatesMap) {
 
 		ProgressRates progressRates = new ProgressRates();
 		progressRates.setTeamUsersId(progressRatesMap.getTeamUsersId());
@@ -38,7 +36,7 @@ public class ProgressRatesService {
 		progressRates.setCourseName(progressRatesMap.getCourseName());
 		progressRates.setLessonId(progressRatesMap.getLessonId());
 		progressRates.setLessonName(progressRatesMap.getLessonName());
-		progressRates.setReportDate(targetDate);
+		progressRates.setReportDate(reportDate);
 		progressRates.setAchievedLearningHours(progressRatesMap.getAchievedLearningHours());
 		progressRates.setTotalLearningHours(progressRatesMap.getTotalLearningHours());
 		progressRates.setTaskProgressRate(progressRatesMap.getTaskProgressRate());

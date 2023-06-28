@@ -1,11 +1,8 @@
 package jp.dcworks.app.paiza_learn_track.config;
 
 import org.mybatis.spring.batch.MyBatisPagingItemReader;
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -13,7 +10,6 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,8 +19,8 @@ import jp.dcworks.app.paiza_learn_track.entity.ProgressRates;
 import jp.dcworks.app.paiza_learn_track.entity.Tasks;
 import jp.dcworks.app.paiza_learn_track.entity.TeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.entity.TeamUsers;
+import jp.dcworks.app.paiza_learn_track.listener.CsvTasksImportStepExecutionListener;
 import jp.dcworks.app.paiza_learn_track.mybatis.entity.ProgressRatesMap;
-import jp.dcworks.app.paiza_learn_track.service.TasksService;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -37,9 +33,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BatchMainConfig {
 
-	@Autowired
-	private TasksService tasksService;
-
 	/** チャンクサイズ */
 	private static final int CHUNK_SIZE = 10;
 
@@ -49,6 +42,8 @@ public class BatchMainConfig {
 	/** Step生成Factory */
 	private final StepBuilderFactory stepBuilderFactory;
 
+	/** 課題データ読み取り：StepExecutionListener */
+	private final CsvTasksImportStepExecutionListener csvTasksImportStepExecutionListener;
 	/** 課題データ読み取り：課題データをCSVファイルから読み取る。 */
 	private final FlatFileItemReader<CsvTasks> csvTasksReader;
 	/** 課題データ読み取り：読み取ったCSVデータをエンティティに変換。 */
@@ -85,19 +80,7 @@ public class BatchMainConfig {
 	Step csvTasksImportStep() {
 		// Builderの取得
 		return stepBuilderFactory.get("csvTasksImportStep")
-			.listener(new StepExecutionListener() {
-
-				@Override
-				public void beforeStep(StepExecution stepExecution) {
-					// データクリーニング処理。（truncateでデータ削除。）
-					tasksService.truncate();
-				}
-
-				@Override
-				public ExitStatus afterStep(StepExecution stepExecution) {
-					return null;
-				}
-			})
+			.listener(csvTasksImportStepExecutionListener)
 			.<CsvTasks, Tasks>chunk(CHUNK_SIZE)
 			.reader(csvTasksReader)
 			.processor(tasksProcessor)
