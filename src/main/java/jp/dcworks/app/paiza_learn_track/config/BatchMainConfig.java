@@ -7,12 +7,14 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import jp.dcworks.app.paiza_learn_track.chunk.ProgressRatesProcessWriter;
+import jp.dcworks.app.paiza_learn_track.chunk.TasksProcessWriter;
+import jp.dcworks.app.paiza_learn_track.chunk.TeamUserTaskProgressProcessWritter;
+import jp.dcworks.app.paiza_learn_track.chunk.TeamUsersProcessWritter;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.entity.ProgressRates;
@@ -46,31 +48,23 @@ public class BatchMainConfig {
 	private final CsvTasksImportStepExecutionListener csvTasksImportStepExecutionListener;
 	/** 課題データ読み取り：課題データをCSVファイルから読み取る。 */
 	private final FlatFileItemReader<CsvTasks> csvTasksReader;
-	/** 課題データ読み取り：読み取ったCSVデータをエンティティに変換。 */
-	private final ItemProcessor<CsvTasks, Tasks> tasksProcessor;
-	/** 課題データ読み取り：エンティティをDBに登録。 */
-	private final ItemWriter<Tasks> tasksWriter;
+	/** 課題データ読み取り：読み取ったCSVデータをエンティティに変換。エンティティをDBに登録。 */
+	private final TasksProcessWriter ｔasksProcessWriter;
 
 	/** 受講生データ読み取り：受講生データをCSVファイルから読み取る。 */
 	private final FlatFileItemReader<CsvTeamUserTaskProgress> csvTeamUserTaskProgressReader;
-	/** 受講生データ読み取り：読み取ったCSVデータをエンティティに変換。 */
-	private final ItemProcessor<CsvTeamUserTaskProgress, TeamUserTaskProgress> teamUserTaskProgressProcessor;
-	/** 受講生データ読み取り：エンティティをDBに登録。 */
-	private final ItemWriter<TeamUserTaskProgress> teamUserTaskProgressWriter;
+	/** 受講生データ読み取り：読み取ったCSVデータをエンティティに変換。エンティティをDBに登録。 */
+	private final TeamUserTaskProgressProcessWritter teamUserTaskProgressProcessWritter;
 
 	/** 受講生メールアドレス読み取り：受講生データをDBから読み取る。 */
 	private final MyBatisPagingItemReader<String> dbTeamUserTaskProgressReader;
-	/** 受講生メールアドレス読み取り：読み取ったDBデータをエンティティに変換。 */
-	private final ItemProcessor<String, TeamUsers> teamUsersProcessor;
-	/** 受講生メールアドレス読み取り：エンティティをDBに登録。 */
-	private final ItemWriter<TeamUsers> teamUsersWriter;
+	/** 受講生メールアドレス読み取り：読み取ったDBデータをエンティティに変換。エンティティをDBに登録。 */
+	private final TeamUsersProcessWritter teamUsersProcessWritter;
 
 	/** 課題進捗率読み取り：課題進捗率データをDBから読み取る。 */
 	private final MyBatisPagingItemReader<ProgressRatesMap> dbProgressRatesReader;
-	/** 課題進捗率読み取：読み取ったDBデータをエンティティに変換。 */
-	private final ItemProcessor<ProgressRatesMap, ProgressRates> progressRatesProcessor;
-	/** 課題進捗率読み取：エンティティをDBに登録。 */
-	private final ItemWriter<ProgressRates> progressRatesWriter;
+	/** 課題進捗率読み取：読み取ったDBデータをエンティティに変換。エンティティをDBに登録。 */
+	private final ProgressRatesProcessWriter progressRatesProcessWriter;
 
 	/**
 	 * [chunk]csv課題マスタデータ読み取りステップ。
@@ -83,8 +77,8 @@ public class BatchMainConfig {
 			.listener(csvTasksImportStepExecutionListener)
 			.<CsvTasks, Tasks>chunk(CHUNK_SIZE)
 			.reader(csvTasksReader)
-			.processor(tasksProcessor)
-			.writer(tasksWriter)
+			.processor(ｔasksProcessWriter)
+			.writer(ｔasksProcessWriter)
 			.build();
 	}
 
@@ -99,8 +93,8 @@ public class BatchMainConfig {
 		return stepBuilderFactory.get("csvTeamUserTaskProgressStep")
 			.<CsvTeamUserTaskProgress, TeamUserTaskProgress>chunk(CHUNK_SIZE)
 			.reader(csvTeamUserTaskProgressReader)
-			.processor(teamUserTaskProgressProcessor)
-			.writer(teamUserTaskProgressWriter)
+			.processor(teamUserTaskProgressProcessWritter)
+			.writer(teamUserTaskProgressProcessWritter)
 			.build();
 	}
 
@@ -114,8 +108,8 @@ public class BatchMainConfig {
 		return stepBuilderFactory.get("dbTeamUsersStep")
 			.<String, TeamUsers>chunk(CHUNK_SIZE)
 			.reader(dbTeamUserTaskProgressReader)
-			.processor(teamUsersProcessor)
-			.writer(teamUsersWriter)
+			.processor(teamUsersProcessWritter)
+			.writer(teamUsersProcessWritter)
 			.build();
 	}
 
@@ -129,8 +123,8 @@ public class BatchMainConfig {
 		return stepBuilderFactory.get("dbProgressRatesStep")
 			.<ProgressRatesMap, ProgressRates>chunk(CHUNK_SIZE)
 			.reader(dbProgressRatesReader)
-			.processor(progressRatesProcessor)
-			.writer(progressRatesWriter)
+			.processor(progressRatesProcessWriter)
+			.writer(progressRatesProcessWriter)
 			.build();
 	}
 
