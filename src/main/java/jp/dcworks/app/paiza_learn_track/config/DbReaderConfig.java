@@ -24,12 +24,12 @@ import jp.dcworks.app.paiza_learn_track.mybatis.entity.ProgressRatesMap;
 @StepScope
 public class DbReaderConfig {
 
-	/** ページサイズ */
-	private static final int PAGE_SIZE = 5;
-
 	/** 起動引数：集計日（yyyy-MM-dd） */
 	@Value(AppConst.JOB_PARAMETERS_REPORT_DATE)
 	private String reportDateStr;
+
+	/** ページサイズ */
+	private static final int PAGE_SIZE = 5;
 
 	@Autowired
 	SqlSessionFactory sqlSessionFactory;

@@ -9,6 +9,8 @@ public class AppConst {
 
 	/** 起動引数：集計日（yyyy-MM-dd） */
 	public static final String JOB_PARAMETERS_REPORT_DATE = "#{jobParameters['report_date']}";
+	/** 起動引数：取り込みファイル（受講生データCSV） */
+	public static final String JOB_PARAMETERS_INPUT_CSV = "#{jobParameters['input_csv']}";
 
 	/** コンテキストキー：「集計日」を受け渡す為のキー。 */
 	public static final String EXECUTION_CONTEXT_KEY_REPORTDATE = "reportDate";
