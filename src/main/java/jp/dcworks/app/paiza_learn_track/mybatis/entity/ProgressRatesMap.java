@@ -1,5 +1,7 @@
 package jp.dcworks.app.paiza_learn_track.mybatis.entity;
 
+import java.util.Date;
+
 import lombok.Data;
 
 /**
@@ -36,4 +38,7 @@ public class ProgressRatesMap {
 
 	/** 課題進捗率（%）：『（「学習時間実績（時）」 / 「学習時間合計（時）） * 100」』の算出結果を登録。 */
 	private Double taskProgressRate;
+
+	/** チャプター最終受講日時 */
+	private Date chapterLastAccessDatetime;
 }

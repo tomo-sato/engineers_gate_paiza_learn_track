@@ -40,6 +40,7 @@ public class ProgressRatesService {
 		progressRates.setAchievedLearningHours(progressRatesMap.getAchievedLearningHours());
 		progressRates.setTotalLearningHours(progressRatesMap.getTotalLearningHours());
 		progressRates.setTaskProgressRate(progressRatesMap.getTaskProgressRate());
+		progressRates.setChapterLastAccessDatetime(progressRatesMap.getChapterLastAccessDatetime());
 
 		return progressRates;
 	}

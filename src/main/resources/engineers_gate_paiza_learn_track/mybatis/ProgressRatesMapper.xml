@@ -12,6 +12,7 @@
 		<result property="achievedLearningHours" column="achieved_learning_hours" />
 		<result property="totalLearningHours" column="total_learning_hours" />
 		<result property="taskProgressRate" column="task_progress_rate" />
+		<result property="chapterLastAccessDatetime" column="chapter_last_access_datetime" />
 	</resultMap>
 
 	<!-- 課題進捗率を算出する。 -->
@@ -26,6 +27,7 @@
 			, t1.achieved_learning_hours
 			, t2.total_learning_hours
 			, (t1.achieved_learning_hours / t2.total_learning_hours) * 100 as task_progress_rate
+			, t1.chapter_last_access_datetime
 		FROM
 			(
 				SELECT
@@ -36,6 +38,7 @@
 					, t.lesson_id
 					, t.lesson_name
 					, sum(t.learning_minutes) / 60 as achieved_learning_hours
+					, max(tutp.chapter_last_access_datetime) as chapter_last_access_datetime
 				FROM team_user_task_progress tutp
 					LEFT JOIN team_users tu ON
 						tu.email_address = tutp.email_address
