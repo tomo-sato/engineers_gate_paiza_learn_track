@@ -68,4 +68,8 @@ public class ProgressRates extends EntityBase {
 	/** チャプター最終受講日時 */
 	@Column(name = "chapter_last_access_datetime", nullable = false)
 	private Date chapterLastAccessDatetime;
+
+	/** オリジナル課題進捗管理ID */
+	@Column(name = "original_task_progress_id", nullable = true)
+	private Long originalTaskProgressId;
 }

@@ -29,7 +29,7 @@ public class DbReaderConfig {
 	private String reportDateStr;
 
 	/** ページサイズ */
-	private static final int PAGE_SIZE = 5;
+	private static final int PAGE_SIZE = 100;
 
 	@Autowired
 	SqlSessionFactory sqlSessionFactory;

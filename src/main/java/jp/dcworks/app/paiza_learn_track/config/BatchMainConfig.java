@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class BatchMainConfig {
 
 	/** チャンクサイズ */
-	private static final int CHUNK_SIZE = 10;
+	private static final int CHUNK_SIZE = 100;
 
 	/** Job生成Factory */
 	private final JobBuilderFactory jobBuilderFactory;
