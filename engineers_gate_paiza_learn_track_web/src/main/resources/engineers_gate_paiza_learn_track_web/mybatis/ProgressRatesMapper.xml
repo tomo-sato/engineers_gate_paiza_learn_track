@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.dcworks.app.paiza_learn_track_web.mybatis.ProgressRatesMapper">
+
+	<resultMap id="ProgressRatesMap" type="jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMap">
+		<result property="teamUsersId" column="id" />
+		<result property="name" column="name" />
+		<result property="learningStartDate" column="learning_start_date" />
+		<result property="elapsedDays" column="elapsed_days" />
+		<result property="progressRate" column="progress_rate" />
+	</resultMap>
+
+	<!-- progress_rates テーブルより team_users_id でグルーピングした学習進捗率を取得する。 -->
+	<select id="getProgressRate" resultMap="ProgressRatesMap">
+		SELECT
+			tu.id
+			, tu.name
+			, tu.learning_start_date
+			, DATEDIFF(now(), tu.learning_start_date) as elapsed_days
+			, ROUND((sum(pr.achieved_learning_hours) / #{sum_learning_minutes}) * 100, 1) as progress_rate
+		FROM
+			progress_rates pr
+				LEFT JOIN team_users tu ON
+					tu.id = pr.team_users_id
+		WHERE
+			tu.delete_flg = 0
+			AND pr.report_date = #{report_date}
+		GROUP BY
+			pr.team_users_id
+		ORDER BY
+			tu.learning_start_date
+			, pr.team_users_id
+		;
+	</select>
+</mapper>

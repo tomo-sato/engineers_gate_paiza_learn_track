@@ -1,1 +1,5 @@
-rootProject.name = 'engineers_gate_paiza_learn_track_batch'
+rootProject.name = 'engineers_gate_paiza_learn_track'
+
+include 'engineers_gate_paiza_learn_track_library'
+include 'engineers_gate_paiza_learn_track_batch'
+include 'engineers_gate_paiza_learn_track_web'

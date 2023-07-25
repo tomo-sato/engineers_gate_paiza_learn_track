@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<!-- ======= Head ======= -->
+<div th:replace="~{shoulder_fragment::head(title = '進捗管理 - 進捗一覧')}"></div>
+
+<body>
+
+	<!-- ======= Header ======= -->
+	<div th:replace="~{shoulder_fragment::header(reportDate = ${#dates.format(reportDate, 'yyyy-MM-dd')})}"></div>
+
+	<main id="main" class="main">
+
+		<div class="pagetitle">
+			<h1>Home</h1>
+		</div><!-- End Page Title -->
+
+		<section class="section">
+			<div class="row">
+				<div class="col-lg-12">
+
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">進捗一覧</h5>
+
+							<!-- Table with stripped rows -->
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th scope="col">No.</th>
+										<th scope="col">名前</th>
+										<th scope="col">最終学習講座名</th>
+										<th scope="col">進捗</th>
+										<th scope="col">学習開始日（経過日数）</th>
+										<th scope="col">終了予測（学習終了予測日数）</th>
+										<th scope="col">進捗率</th>
+										<th scope="col">最終受講日</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="progressRates:${progressRatesDtoList}">
+										<td scope="row"><a th:href="@{/detail/{id}?reportDate={reportDate}(id=${progressRates.teamUsersId}, reportDate=${#dates.format(reportDate, 'yyyy-MM-dd')})}" th:text="${progressRates.teamUsersId}">1</a></td>
+										<td><a th:href="@{/detail/{id}?reportDate={reportDate}(id=${progressRates.teamUsersId}, reportDate=${#dates.format(reportDate, 'yyyy-MM-dd')})}" th:text="${progressRates.name}">佐藤 裕子</a></td>
+										<td th:text="${progressRates.courseName}">HTML/CSS入門編</td>
+										<td>[[${progressRates.lessonName}]]<br>【[[${progressRates.chapterName}]]】</td>
+										<td th:text="|${#dates.format(progressRates.learningStartDate, 'yyyy-MM-dd')}（${progressRates.elapsedDays} 日）|">2023-07-05（10日）</td>
+										<td th:text="|${#dates.format(progressRates.predictedEndDate, 'yyyy-MM-dd')}（+${progressRates.predictedEndDuration} 日）|">2023-07-05（10日）</td>
+										<td><b th:text="|${progressRates.progressRate}%|">100.00%</b></td>
+										<td th:text="${#dates.format(progressRates.chapterLastAccessDatetime, 'yyyy-MM-dd')}">2016-05-25</td>
+									</tr>
+								</tbody>
+							</table>
+							<!-- End Table with stripped rows -->
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+	</main><!-- End #main -->
+
+	<!-- ======= Footer ======= -->
+	<div th:replace="~{shoulder_fragment::footer}"></div>
+
+</body>
+
+</html>

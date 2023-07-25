@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<!-- ======= Head ======= -->
+<div th:replace="~{shoulder_fragment::head(title = '進捗管理 - 講座別進捗一覧')}"></div>
+
+<body>
+
+	<!-- ======= Header ======= -->
+	<div th:replace="~{shoulder_fragment::header(reportDate = ${#dates.format(reportDate, 'yyyy-MM-dd')})}"></div>
+
+	<main id="main" class="main">
+
+		<div class="pagetitle">
+			<h1>Home</h1>
+		</div><!-- End Page Title -->
+
+		<section class="section">
+			<div class="row">
+				<div class="col-lg-12">
+
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">講座別進捗一覧（	山田 太郎）</h5>
+
+							<!-- Table with stripped rows -->
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th scope="col">講座ID.</th>
+										<th scope="col">講座種別</th>
+										<th scope="col">講座名</th>
+										<th scope="col">レッスン名</th>
+										<th scope="col">学習時間合計（時）</th>
+										<th scope="col">学習時間実績（時）</th>
+										<th scope="col">進捗率</th>
+										<th scope="col">最終受講日</th>
+										<th scope="col">オリジナル課題進捗率</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="userProgressRates:${userProgressRatesDtoList}">
+										<td scope="row" th:text="${userProgressRates.maxTasksId}">1</td>
+										<td th:text="${userProgressRates.taskTypesId == 1 ? 'paiza' : 'オリジナル'}">paiza</td>
+										<td th:text="${userProgressRates.courseName}">Java入門編</a></td>
+										<td th:text="${userProgressRates.lessonName}">Java入門編1:プログラミングを学ぶ</td>
+										<td th:text="${userProgressRates.sumTotalLearningHours}">6.65</td>
+										<td th:text="${userProgressRates.sumAchievedLearningHours}">6.65</td>
+										<td><b th:text="${userProgressRates.taskProgressRate != null ? userProgressRates.taskProgressRate + '%' : ''}">100.00%</b></td>
+										<td th:text="${#dates.format(userProgressRates.chapterLastAccessDatetime, 'yyyy-MM-dd')}">2016-05-25</td>
+										<td>
+											<div th:if="${userProgressRates.taskTypesId == 2}">
+												<form class="row" method="post" th:action="@{/registRate/{teamUsersId}/{maxTasksId}(teamUsersId=${teamUsersId},maxTasksId=${userProgressRates.maxTasksId})}" th:object="${requestTaskProgressRate}">
+													<input type="hidden" name="reportDate" th:value="${#dates.format(reportDate, 'yyyy-MM-dd')}">
+													<label class="col-sm-8">
+														<input type="text" name="taskProgressRate" class="form-control col-lg-4" th:field="*{taskProgressRate}">
+													</label>
+													<div class="col-sm-4">
+														<button type="submit" class="btn btn-primary">保存</button>
+													</div>
+												</form>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<!-- End Table with stripped rows -->
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+	</main><!-- End #main -->
+
+	<!-- ======= Footer ======= -->
+	<div th:replace="~{shoulder_fragment::footer}"></div>
+
+</body>
+
+</html>

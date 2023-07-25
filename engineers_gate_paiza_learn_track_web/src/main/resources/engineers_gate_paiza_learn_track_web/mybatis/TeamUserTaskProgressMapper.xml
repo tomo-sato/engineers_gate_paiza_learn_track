@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.dcworks.app.paiza_learn_track_web.mybatis.TeamUserTaskProgressMapper">
+
+	<resultMap id="TeamUserTaskProgressMap" type="jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TeamUserTaskProgressMap">
+		<result property="teamUsersId" column="team_users_id" />
+		<result property="name" column="name" />
+		<result property="lastTasksId" column="last_tasks_id" />
+		<result property="courseName" column="course_name" />
+		<result property="lessonName" column="lesson_name" />
+		<result property="chapterName" column="chapter_name" />
+		<result property="chapterLastAccessDatetime" column="chapter_last_access_datetime" />
+		<result property="reportDate" column="report_date" />
+	</resultMap>
+
+	<!-- team_user_task_progress テーブルより受講生の最終着手課題を取得する。 -->
+	<select id="getLastAccessLesson" resultMap="TeamUserTaskProgressMap">
+		SELECT
+			t1.team_users_id
+			, t1.name
+			, t1.last_tasks_id
+			, t0.course_name
+			, t0.lesson_name
+			, t0.chapter_name
+			, t2.chapter_last_access_datetime
+			, t1.report_date
+		FROM
+			tasks t0
+				INNER JOIN (
+					SELECT
+						tutp.email_address
+						, tutp.report_date
+						, tu.name
+						, tu.id as team_users_id
+						, max(t.id) as last_tasks_id
+					FROM
+						team_user_task_progress tutp
+							LEFT JOIN tasks t ON
+								tutp.chapter_id = t.chapter_id
+							LEFT JOIN team_users tu ON
+								tutp.email_address = tu.email_address
+					WHERE
+						tutp.report_date = #{report_date}
+					GROUP BY
+						tutp.email_address
+				) t1 ON
+					t0.id = t1.last_tasks_id
+				INNER JOIN (
+					SELECT
+						tutp2.email_address
+						, max(tutp2.chapter_last_access_datetime) as chapter_last_access_datetime
+					FROM
+						team_user_task_progress tutp2
+					WHERE
+						tutp2.report_date = #{report_date}
+					GROUP BY
+						tutp2.email_address
+				) t2 ON
+					t1.email_address = t2.email_address
+		;
+	</select>
+</mapper>
