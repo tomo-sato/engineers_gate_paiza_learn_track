@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jp.dcworks.app.paiza_learn_track.entity.ProgressRates;
 import jp.dcworks.app.paiza_learn_track.mybatis.entity.ProgressRatesMap;
-import jp.dcworks.app.paiza_learn_track.repository.ProgressRatesRepository;
+import jp.dcworks.app.paiza_learn_track_library.entity.ProgressRates;
+import jp.dcworks.app.paiza_learn_track_library.repository.ProgressRatesRepository;
 
 /**
  * 課題進捗率サービスクラス。

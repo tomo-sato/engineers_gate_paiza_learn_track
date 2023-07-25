@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 import jp.dcworks.app.paiza_learn_track.AppConst;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
-import jp.dcworks.app.paiza_learn_track.entity.TeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.service.TeamUserTaskProgressService;
+import jp.dcworks.app.paiza_learn_track_library.entity.TeamUserTaskProgress;
 import lombok.extern.log4j.Log4j2;
 
 /**

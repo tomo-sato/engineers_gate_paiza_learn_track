@@ -17,12 +17,12 @@ import jp.dcworks.app.paiza_learn_track.chunk.TeamUserTaskProgressProcessWritter
 import jp.dcworks.app.paiza_learn_track.chunk.TeamUsersProcessWritter;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
-import jp.dcworks.app.paiza_learn_track.entity.ProgressRates;
-import jp.dcworks.app.paiza_learn_track.entity.Tasks;
-import jp.dcworks.app.paiza_learn_track.entity.TeamUserTaskProgress;
-import jp.dcworks.app.paiza_learn_track.entity.TeamUsers;
 import jp.dcworks.app.paiza_learn_track.listener.CsvTasksImportStepExecutionListener;
 import jp.dcworks.app.paiza_learn_track.mybatis.entity.ProgressRatesMap;
+import jp.dcworks.app.paiza_learn_track_library.entity.ProgressRates;
+import jp.dcworks.app.paiza_learn_track_library.entity.Tasks;
+import jp.dcworks.app.paiza_learn_track_library.entity.TeamUserTaskProgress;
+import jp.dcworks.app.paiza_learn_track_library.entity.TeamUsers;
 import lombok.RequiredArgsConstructor;
 
 /**

@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jp.dcworks.app.paiza_learn_track.entity.TeamUsers;
-import jp.dcworks.app.paiza_learn_track.repository.TeamUsersRepository;
+import jp.dcworks.app.paiza_learn_track_library.entity.TeamUsers;
+import jp.dcworks.app.paiza_learn_track_library.repository.TeamUsersRepository;
 
 /**
  * チームユーザー課題進捗サービスクラス。

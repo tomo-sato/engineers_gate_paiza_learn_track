@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jp.dcworks.app.paiza_learn_track.AppConst;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
-import jp.dcworks.app.paiza_learn_track.entity.Tasks;
-import jp.dcworks.app.paiza_learn_track.repository.TasksRepository;
-import jp.dcworks.app.paiza_learn_track.util.NumberUtil;
+import jp.dcworks.app.paiza_learn_track_library.entity.Tasks;
+import jp.dcworks.app.paiza_learn_track_library.repository.TasksRepository;
+import jp.dcworks.app.paiza_learn_track_library.util.NumberUtil;
 
 /**
  * チームユーザー課題進捗サービスクラス。

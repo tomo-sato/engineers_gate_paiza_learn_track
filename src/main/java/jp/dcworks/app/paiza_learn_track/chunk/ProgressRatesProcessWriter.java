@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import jp.dcworks.app.paiza_learn_track.AppConst;
-import jp.dcworks.app.paiza_learn_track.entity.ProgressRates;
 import jp.dcworks.app.paiza_learn_track.mybatis.entity.ProgressRatesMap;
 import jp.dcworks.app.paiza_learn_track.service.ProgressRatesService;
+import jp.dcworks.app.paiza_learn_track_library.entity.ProgressRates;
 import lombok.extern.log4j.Log4j2;
 
 /**

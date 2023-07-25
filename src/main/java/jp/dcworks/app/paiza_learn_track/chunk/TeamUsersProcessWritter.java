@@ -8,9 +8,9 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jp.dcworks.app.paiza_learn_track.entity.TeamUsers;
 import jp.dcworks.app.paiza_learn_track.service.TeamUsersService;
-import jp.dcworks.app.paiza_learn_track.util.CollectionUtil;
+import jp.dcworks.app.paiza_learn_track_library.entity.TeamUsers;
+import jp.dcworks.app.paiza_learn_track_library.util.CollectionUtil;
 import lombok.extern.log4j.Log4j2;
 
 /**

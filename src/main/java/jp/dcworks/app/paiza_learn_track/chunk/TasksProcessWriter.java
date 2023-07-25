@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
-import jp.dcworks.app.paiza_learn_track.entity.Tasks;
 import jp.dcworks.app.paiza_learn_track.service.TasksService;
+import jp.dcworks.app.paiza_learn_track_library.entity.Tasks;
 import lombok.extern.log4j.Log4j2;
 
 /**

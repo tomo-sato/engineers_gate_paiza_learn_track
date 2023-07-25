@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 import jp.dcworks.app.paiza_learn_track.AppConst;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
-import jp.dcworks.app.paiza_learn_track.entity.TeamUserTaskProgress;
-import jp.dcworks.app.paiza_learn_track.repository.TeamUserTaskProgressRepository;
-import jp.dcworks.app.paiza_learn_track.util.NumberUtil;
+import jp.dcworks.app.paiza_learn_track_library.entity.TeamUserTaskProgress;
+import jp.dcworks.app.paiza_learn_track_library.repository.TeamUserTaskProgressRepository;
+import jp.dcworks.app.paiza_learn_track_library.util.NumberUtil;
 
 /**
  * チームユーザー課題進捗サービスクラス。
