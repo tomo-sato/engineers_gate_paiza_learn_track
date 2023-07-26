@@ -82,9 +82,9 @@
 				, t.course_name
 				, t.lesson_id
 				, t.lesson_name
-				, (t.learning_minutes / 60) * (otp.task_progress_rate / 100) as achieved_learning_hours
+				, (t.learning_minutes / 60) * (max(otp.task_progress_rate) / 100) as achieved_learning_hours
 				, (t.learning_minutes / 60) as total_learning_hours
-				, otp.task_progress_rate
+				, max(otp.task_progress_rate)
 				, REPLACE(max(otp.report_date), max(otp.report_date), #{report_date}) as chapter_last_access_datetime
 			FROM
 				original_task_progress otp
@@ -96,7 +96,6 @@
 				, t.course_name
 				, t.lesson_id
 				, t.lesson_name
-				, otp.task_progress_rate
 				, t.learning_minutes
 		LIMIT #{_pagesize}
 		OFFSET #{_skiprows};
