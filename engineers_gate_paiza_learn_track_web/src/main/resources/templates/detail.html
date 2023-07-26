@@ -47,7 +47,7 @@
 										<td th:text="${userProgressRates.sumTotalLearningHours}">6.65</td>
 										<td th:text="${userProgressRates.sumAchievedLearningHours}">6.65</td>
 										<td><b th:text="${userProgressRates.taskProgressRate != null ? userProgressRates.taskProgressRate + '%' : ''}">100.00%</b></td>
-										<td th:text="${#dates.format(userProgressRates.chapterLastAccessDatetime, 'yyyy-MM-dd')}">2016-05-25</td>
+										<td style="white-space: nowrap;" th:text="${#dates.format(userProgressRates.chapterLastAccessDatetime, 'yyyy-MM-dd')}">2016-05-25</td>
 										<td>
 											<div th:if="${userProgressRates.taskTypesId == 2}">
 												<form class="row" method="post" th:action="@{/registRate/{teamUsersId}/{maxTasksId}(teamUsersId=${teamUsersId},maxTasksId=${userProgressRates.maxTasksId})}" th:object="${requestTaskProgressRate}">

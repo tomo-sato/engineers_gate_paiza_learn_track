@@ -43,10 +43,10 @@
 										<td><a th:href="@{/detail/{id}?reportDate={reportDate}(id=${progressRates.teamUsersId}, reportDate=${#dates.format(reportDate, 'yyyy-MM-dd')})}" th:text="${progressRates.name}">佐藤 裕子</a></td>
 										<td th:text="${progressRates.courseName}">HTML/CSS入門編</td>
 										<td>[[${progressRates.lessonName}]]<br>【[[${progressRates.chapterName}]]】</td>
-										<td th:text="|${#dates.format(progressRates.learningStartDate, 'yyyy-MM-dd')}（${progressRates.elapsedDays} 日）|">2023-07-05（10日）</td>
-										<td th:text="|${#dates.format(progressRates.predictedEndDate, 'yyyy-MM-dd')}（+${progressRates.predictedEndDuration} 日）|">2023-07-05（10日）</td>
+										<td style="white-space: nowrap;" th:text="|${#dates.format(progressRates.learningStartDate, 'yyyy-MM-dd')}（${progressRates.elapsedDays} 日）|">2023-07-05（10日）</td>
+										<td style="white-space: nowrap;" th:text="|${#dates.format(progressRates.predictedEndDate, 'yyyy-MM-dd')}（+${progressRates.predictedEndDuration} 日）|">2023-07-05（10日）</td>
 										<td><b th:text="|${progressRates.progressRate}%|">100.00%</b></td>
-										<td th:text="${#dates.format(progressRates.chapterLastAccessDatetime, 'yyyy-MM-dd')}">2016-05-25</td>
+										<td style="white-space: nowrap;" th:text="${#dates.format(progressRates.chapterLastAccessDatetime, 'yyyy-MM-dd')}">2016-05-25</td>
 									</tr>
 								</tbody>
 							</table>
