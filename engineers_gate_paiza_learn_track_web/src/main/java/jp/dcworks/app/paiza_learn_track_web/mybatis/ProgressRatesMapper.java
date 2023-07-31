@@ -20,8 +20,9 @@ public interface ProgressRatesMapper {
 	 * progress_rates テーブルより team_users_id でグルーピングした学習進捗率を取得する。
 	 *
 	 * @param reportDate 集計日
-	 * @param sumLearningMinutes 学習時間合計
+	 * @param sumLearningHours 学習時間合計
+	 * @param teamUsersId ユーザーID
 	 * @return
 	 */
-	List<ProgressRatesMap> getProgressRate(@Param("report_date") Date reportDate, @Param("sum_learning_minutes") Double sumLearningMinutes);
+	List<ProgressRatesMap> getProgressRate(@Param("report_date") Date reportDate, @Param("sum_learning_hours") Double sumLearningHours, @Param("team_users_id") Long teamUsersId);
 }

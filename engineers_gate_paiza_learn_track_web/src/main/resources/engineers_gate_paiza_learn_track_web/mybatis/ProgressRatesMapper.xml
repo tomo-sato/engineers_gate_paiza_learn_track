@@ -17,7 +17,7 @@
 			, tu.name
 			, tu.learning_start_date
 			, DATEDIFF(now(), tu.learning_start_date) as elapsed_days
-			, ROUND((sum(pr.achieved_learning_hours) / #{sum_learning_minutes}) * 100, 1) as progress_rate
+			, ROUND((sum(pr.achieved_learning_hours) / #{sum_learning_hours}) * 100, 1) as progress_rate
 		FROM
 			progress_rates pr
 				LEFT JOIN team_users tu ON
@@ -25,6 +25,9 @@
 		WHERE
 			tu.delete_flg = 0
 			AND pr.report_date = #{report_date}
+			<if test="team_users_id != null">
+			AND pr.team_users_id = #{team_users_id}
+			</if>
 		GROUP BY
 			pr.team_users_id
 		ORDER BY

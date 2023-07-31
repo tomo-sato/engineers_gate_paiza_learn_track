@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jp.dcworks.app.paiza_learn_track_library.entity.OriginalTaskProgress;
 import jp.dcworks.app.paiza_learn_track_library.entity.ProgressRates;
 import jp.dcworks.app.paiza_learn_track_library.entity.Tasks;
+import jp.dcworks.app.paiza_learn_track_library.entity.TeamUsers;
 import jp.dcworks.app.paiza_learn_track_web.dto.ProgressRatesDto;
 import jp.dcworks.app.paiza_learn_track_web.dto.RequestTaskProgressRate;
 import jp.dcworks.app.paiza_learn_track_web.dto.UserProgressRatesDto;
@@ -35,6 +36,7 @@ import jp.dcworks.app.paiza_learn_track_web.service.OriginalTaskProgressService;
 import jp.dcworks.app.paiza_learn_track_web.service.ProgressRatesService;
 import jp.dcworks.app.paiza_learn_track_web.service.TasksService;
 import jp.dcworks.app.paiza_learn_track_web.service.TeamUserTaskProgressService;
+import jp.dcworks.app.paiza_learn_track_web.service.TeamUsersService;
 import lombok.extern.log4j.Log4j2;
 
 /**
@@ -59,6 +61,9 @@ public class HomeController {
 	/** オリジナル課題進捗管理サービス */
 	@Autowired
 	OriginalTaskProgressService originalTaskProgressService;
+	/** チームユーザーサービス */
+	@Autowired
+	TeamUsersService teamUsersService;
 
 	/**
 	 * [GET]講座別一覧画面のアクション。
@@ -98,17 +103,41 @@ public class HomeController {
 	@GetMapping("/detail/{teamUsersId}")
 	public String detail(@RequestParam(name = "reportDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date reportDate, @PathVariable Long teamUsersId, Model model) throws ParseException {
 
+		// ユーザー情報取得
+		TeamUsers teamUsers = teamUsersService.getTeamUsers(teamUsersId);
+
 		// tasks テーブルより レッスンでグルーピングした結果を表出するリストのベースとする。（ここで取得した結果が全課題。）
 		List<TasksMap> tasksMapList = tasksService.findGroupByLesson();
 		// ユーザーID、集計日で検索した結果を取得する。
 		Map<String, ProgressRates> progressRatesMap = progressRatesService.findByTeamUsersIdAndReportDateOrderMap(teamUsersId, reportDate);
 
+		// 学習時間（時）の合計を取得する。
+		Double sumLearningHours = tasksService.findGroupBySumLearningHours();
+		// 受講生の進捗率を取得。
+		ProgressRatesMap progressRates = progressRatesService.getProgressRate(reportDate, sumLearningHours, teamUsersId);
+		// 受講生の最終着手課題を取得する。
+		Map<Long, TeamUserTaskProgressMap> lastAccessLessonMap = teamUserTaskProgressService.getLastAccessLessonMap(reportDate);
+		TeamUserTaskProgressMap lastAccessLesson = lastAccessLessonMap.get(teamUsersId);
+
 		// 全課題と、ユーザー情報を紐付ける。
 		List<UserProgressRatesDto> userProgressRatesDtoList = convertUserProgressRatesDto(tasksMapList, progressRatesMap);
 
+		Double progressRate = progressRates.getProgressRate();
+		Integer elapsedDays = progressRates.getElapsedDays();
+		Integer predictedEndDuration = (int) (elapsedDays / (progressRate / 100)) - elapsedDays;
+		// 学習終了予測日
+		Date currentDate = new Date();
+		long millisecondsToAdd = predictedEndDuration * 24 * 60 * 60 * 1000L;
+		Date predictedEndDate = new Date(currentDate.getTime() + millisecondsToAdd);
+
+		model.addAttribute("teamUsers", teamUsers);
 		model.addAttribute("reportDate", reportDate);
 		model.addAttribute("userProgressRatesDtoList", userProgressRatesDtoList);
 		model.addAttribute("teamUsersId", teamUsersId);
+		model.addAttribute("progressRates", progressRates);
+		model.addAttribute("lastAccessLesson", lastAccessLesson);
+		model.addAttribute("predictedEndDuration", predictedEndDuration);
+		model.addAttribute("predictedEndDate", predictedEndDate);
 
 		if (!model.containsAttribute("requestTaskProgressRate")) {
 			model.addAttribute("requestTaskProgressRate", new RequestTaskProgressRate());
