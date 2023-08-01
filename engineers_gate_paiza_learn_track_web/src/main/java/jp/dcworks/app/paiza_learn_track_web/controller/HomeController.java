@@ -29,6 +29,7 @@ import jp.dcworks.app.paiza_learn_track_library.entity.TeamUsers;
 import jp.dcworks.app.paiza_learn_track_web.dto.ProgressRatesDto;
 import jp.dcworks.app.paiza_learn_track_web.dto.RequestTaskProgressRate;
 import jp.dcworks.app.paiza_learn_track_web.dto.UserProgressRatesDto;
+import jp.dcworks.app.paiza_learn_track_web.dto.UserProgressRatesDto.UserProgressRateDetail;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMap;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TasksMap;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TeamUserTaskProgressMap;
@@ -109,35 +110,21 @@ public class HomeController {
 		// tasks テーブルより レッスンでグルーピングした結果を表出するリストのベースとする。（ここで取得した結果が全課題。）
 		List<TasksMap> tasksMapList = tasksService.findGroupByLesson();
 		// ユーザーID、集計日で検索した結果を取得する。
-		Map<String, ProgressRates> progressRatesMap = progressRatesService.findByTeamUsersIdAndReportDateOrderMap(teamUsersId, reportDate);
+		Map<String, ProgressRates> progressRatesAllLessonMap = progressRatesService.findByTeamUsersIdAndReportDateOrderMap(teamUsersId, reportDate);
 
 		// 学習時間（時）の合計を取得する。
 		Double sumLearningHours = tasksService.findGroupBySumLearningHours();
 		// 受講生の進捗率を取得。
-		ProgressRatesMap progressRates = progressRatesService.getProgressRate(reportDate, sumLearningHours, teamUsersId);
+		ProgressRatesMap progressRatesMap = progressRatesService.getProgressRate(reportDate, sumLearningHours, teamUsersId);
 		// 受講生の最終着手課題を取得する。
 		Map<Long, TeamUserTaskProgressMap> lastAccessLessonMap = teamUserTaskProgressService.getLastAccessLessonMap(reportDate);
 		TeamUserTaskProgressMap lastAccessLesson = lastAccessLessonMap.get(teamUsersId);
 
 		// 全課題と、ユーザー情報を紐付ける。
-		List<UserProgressRatesDto> userProgressRatesDtoList = convertUserProgressRatesDto(tasksMapList, progressRatesMap);
+		UserProgressRatesDto userProgressRatesDto = convertUserProgressRatesDto(teamUsers, tasksMapList, progressRatesMap, progressRatesAllLessonMap, lastAccessLesson);
 
-		Double progressRate = progressRates.getProgressRate();
-		Integer elapsedDays = progressRates.getElapsedDays();
-		Integer predictedEndDuration = (int) (elapsedDays / (progressRate / 100)) - elapsedDays;
-		// 学習終了予測日
-		Date currentDate = new Date();
-		long millisecondsToAdd = predictedEndDuration * 24 * 60 * 60 * 1000L;
-		Date predictedEndDate = new Date(currentDate.getTime() + millisecondsToAdd);
-
-		model.addAttribute("teamUsers", teamUsers);
 		model.addAttribute("reportDate", reportDate);
-		model.addAttribute("userProgressRatesDtoList", userProgressRatesDtoList);
-		model.addAttribute("teamUsersId", teamUsersId);
-		model.addAttribute("progressRates", progressRates);
-		model.addAttribute("lastAccessLesson", lastAccessLesson);
-		model.addAttribute("predictedEndDuration", predictedEndDuration);
-		model.addAttribute("predictedEndDate", predictedEndDate);
+		model.addAttribute("userProgressRatesDto", userProgressRatesDto);
 
 		if (!model.containsAttribute("requestTaskProgressRate")) {
 			model.addAttribute("requestTaskProgressRate", new RequestTaskProgressRate());
@@ -207,20 +194,38 @@ public class HomeController {
 
 	/**
 	 * DTOコンバータ
+	 * @param teamUsers
 	 *
 	 * @param tasksMapList
-	 * @param progressRatesMap
+	 * @param progressRates
+	 * @param progressRatesAllLessonMap
+	 * @param lastAccessLesson
 	 * @return
 	 */
-	private List<UserProgressRatesDto> convertUserProgressRatesDto(List<TasksMap> tasksMapList,
-			Map<String, ProgressRates> progressRatesMap) {
+	private UserProgressRatesDto convertUserProgressRatesDto(TeamUsers teamUsers, List<TasksMap> tasksMapList,
+			ProgressRatesMap progressRatesMap, Map<String, ProgressRates> progressRatesAllLessonMap, TeamUserTaskProgressMap lastAccessLesson) {
 
-		List<UserProgressRatesDto> retList = new ArrayList<UserProgressRatesDto>();
+		Double progressRate = progressRatesMap.getProgressRate();
+		Integer elapsedDays = progressRatesMap.getElapsedDays();
+		Integer predictedEndDuration = (int) (elapsedDays / (progressRate / 100)) - elapsedDays;
+		// 学習終了予測日
+		Date currentDate = new Date();
+		long millisecondsToAdd = predictedEndDuration * 24 * 60 * 60 * 1000L;
+		Date predictedEndDate = new Date(currentDate.getTime() + millisecondsToAdd);
+
+		UserProgressRatesDto retdto = new UserProgressRatesDto();
+		retdto.setTeamUsers(teamUsers);
+		retdto.setProgressRatesMap(progressRatesMap);
+		retdto.setLastAccessLesson(lastAccessLesson);
+		retdto.setPredictedEndDuration(predictedEndDuration);
+		retdto.setPredictedEndDate(predictedEndDate);
+
+		List<UserProgressRateDetail> retList = new ArrayList<UserProgressRateDetail>();
 
 		for (TasksMap item : tasksMapList) {
 			String lessonId = item.getLessonId();
 
-			UserProgressRatesDto userProgressRatesDto = new UserProgressRatesDto();
+			UserProgressRateDetail userProgressRatesDto = new UserProgressRateDetail();
 			userProgressRatesDto.setMaxTasksId(item.getMaxTasksId());
 			userProgressRatesDto.setTaskTypesId(item.getTaskTypesId());
 			userProgressRatesDto.setCourseId(item.getCourseId());
@@ -228,8 +233,8 @@ public class HomeController {
 			userProgressRatesDto.setLessonName(item.getLessonName());
 			userProgressRatesDto.setSumTotalLearningHours(item.getSumLearningMinutes());
 
-			if (progressRatesMap.containsKey(lessonId)) {
-				ProgressRates progressRates = progressRatesMap.get(lessonId);
+			if (progressRatesAllLessonMap.containsKey(lessonId)) {
+				ProgressRates progressRates = progressRatesAllLessonMap.get(lessonId);
 
 				userProgressRatesDto.setSumAchievedLearningHours(progressRates.getAchievedLearningHours());
 				userProgressRatesDto.setTaskProgressRate(progressRates.getTaskProgressRate());
@@ -239,7 +244,9 @@ public class HomeController {
 			retList.add(userProgressRatesDto);
 		}
 
-		return retList;
+		retdto.setUserProgressRateDetailList(retList);
+
+		return retdto;
 	}
 
 	/**

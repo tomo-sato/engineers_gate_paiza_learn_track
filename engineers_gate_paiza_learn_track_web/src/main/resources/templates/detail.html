@@ -17,18 +17,18 @@
 					<div class="card">
 						<div class="card-body pt-4">
 							<div class="card-body profile-card d-flex flex-column align-items-center">
-								<h2 th:text="${teamUsers.name}">山田太郎</h2>
+								<h2 th:text="${userProgressRatesDto.teamUsers.name}">山田太郎</h2>
 								<h3>github：<a href="https://github.com/tomo-sato">tomo-sato</a></h3>
 							</div>
 							<table class="table table-striped">
 								<tbody>
 									<tr>
 										<th style="white-space: nowrap;">学習開始日（経過日数）</th>
-										<td style="white-space: nowrap;" th:text="|${#dates.format(progressRates.learningStartDate, 'yyyy-MM-dd')}（${progressRates.elapsedDays} 日）|">2022-12-01（239 日）</td>
+										<td style="white-space: nowrap;" th:text="|${#dates.format(userProgressRatesDto.progressRatesMap.learningStartDate, 'yyyy-MM-dd')}（${userProgressRatesDto.progressRatesMap.elapsedDays} 日）|">2022-12-01（239 日）</td>
 									</tr>
 									<tr>
 										<th style="white-space: nowrap;">終了予測（学習終了予測日数）</th>
-										<td style="white-space: nowrap;" th:text="|${#dates.format(predictedEndDate, 'yyyy-MM-dd')}（+${predictedEndDuration} 日）|">2023-09-28（+62 日）</td>
+										<td style="white-space: nowrap;" th:text="|${#dates.format(userProgressRatesDto.predictedEndDate, 'yyyy-MM-dd')}（+${userProgressRatesDto.predictedEndDuration} 日）|">2023-09-28（+62 日）</td>
 									</tr>
 								</tbody>
 							</table>
@@ -40,10 +40,10 @@
 								</thead>
 								<tbody>
 									<tr>
-										<td th:text="${lastAccessLesson.courseName}">シェルコマンド入門編</td>
+										<td th:text="${userProgressRatesDto.lastAccessLesson.courseName}">シェルコマンド入門編</td>
 									</tr>
 									<tr>
-										<td>[[${lastAccessLesson.lessonName}]]<br>【[[${lastAccessLesson.chapterName}]]】</td>
+										<td>[[${userProgressRatesDto.lastAccessLesson.lessonName}]]<br>【[[${userProgressRatesDto.lastAccessLesson.chapterName}]]】</td>
 									</tr>
 								</tbody>
 							</table>
@@ -133,7 +133,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr th:each="userProgressRates:${userProgressRatesDtoList}">
+									<tr th:each="userProgressRates:${userProgressRatesDto.userProgressRateDetailList}">
 										<td scope="row" th:text="${userProgressRates.maxTasksId}">1</td>
 										<td style="white-space: nowrap;" th:text="${userProgressRates.taskTypesId == 1 ? 'paiza' : 'オリジナル'}">paiza</td>
 										<td style="white-space: nowrap;" th:text="${userProgressRates.courseName}">Java入門編</a></td>
@@ -144,7 +144,7 @@
 										<td style="white-space: nowrap;" th:text="${#dates.format(userProgressRates.chapterLastAccessDatetime, 'yyyy-MM-dd')}">2016-05-25</td>
 										<td style="white-space: nowrap;">
 											<div th:if="${userProgressRates.taskTypesId == 2}">
-												<form class="row" method="post" th:action="@{/registRate/{teamUsersId}/{maxTasksId}(teamUsersId=${teamUsersId},maxTasksId=${userProgressRates.maxTasksId})}" th:object="${requestTaskProgressRate}">
+												<form class="row" method="post" th:action="@{/registRate/{teamUsersId}/{maxTasksId}(teamUsersId=${userProgressRatesDto.teamUsers.id},maxTasksId=${userProgressRates.maxTasksId})}" th:object="${requestTaskProgressRate}">
 													<input type="hidden" name="reportDate" th:value="${#dates.format(reportDate, 'yyyy-MM-dd')}">
 													<label class="col-sm-6">
 														<input type="text" name="taskProgressRate" class="form-control col-lg-4" th:field="*{taskProgressRate}">
