@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import jp.dcworks.app.paiza_learn_track.chunk.ProgressRatesProcessWriter;
+import jp.dcworks.app.paiza_learn_track.chunk.TaskCategoriesProcessWriter;
 import jp.dcworks.app.paiza_learn_track.chunk.TasksProcessWriter;
 import jp.dcworks.app.paiza_learn_track.chunk.TeamUserTaskProgressProcessWritter;
 import jp.dcworks.app.paiza_learn_track.chunk.TeamUsersProcessWritter;
@@ -20,6 +21,7 @@ import jp.dcworks.app.paiza_learn_track.dto.CsvTeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track.listener.CsvTasksImportStepExecutionListener;
 import jp.dcworks.app.paiza_learn_track.mybatis.entity.ProgressRatesMap;
 import jp.dcworks.app.paiza_learn_track_library.entity.ProgressRates;
+import jp.dcworks.app.paiza_learn_track_library.entity.TaskCategories;
 import jp.dcworks.app.paiza_learn_track_library.entity.Tasks;
 import jp.dcworks.app.paiza_learn_track_library.entity.TeamUserTaskProgress;
 import jp.dcworks.app.paiza_learn_track_library.entity.TeamUsers;
@@ -50,6 +52,8 @@ public class BatchMainConfig {
 	private final FlatFileItemReader<CsvTasks> csvTasksReader;
 	/** 課題データ読み取り：読み取ったCSVデータをエンティティに変換。エンティティをDBに登録。 */
 	private final TasksProcessWriter ｔasksProcessWriter;
+	/** 課題データ読み取り：読み取ったCSVデータをエンティティに変換。エンティティをDBに登録。 */
+	private final TaskCategoriesProcessWriter taskCategoriesProcessWriter;
 
 	/** 受講生データ読み取り：受講生データをCSVファイルから読み取る。 */
 	private final FlatFileItemReader<CsvTeamUserTaskProgress> csvTeamUserTaskProgressReader;
@@ -79,6 +83,21 @@ public class BatchMainConfig {
 			.reader(csvTasksReader)
 			.processor(ｔasksProcessWriter)
 			.writer(ｔasksProcessWriter)
+			.build();
+	}
+
+	/**
+	 * [chunk]csv課題マスタデータ読み取りステップ。
+	 * @return
+	 */
+	@Bean
+	Step csvTaskCategoriesImportStep() {
+		// Builderの取得
+		return stepBuilderFactory.get("csvTasksImportStep")
+			.<CsvTasks, TaskCategories>chunk(CHUNK_SIZE)
+			.reader(csvTasksReader)
+			.processor(taskCategoriesProcessWriter)
+			.writer(taskCategoriesProcessWriter)
 			.build();
 	}
 
@@ -137,6 +156,7 @@ public class BatchMainConfig {
 		return jobBuilderFactory.get("paizaLearnTrackJob")
 			.incrementer(new RunIdIncrementer())
 			.start(csvTasksImportStep())
+//			.next(csvTaskCategoriesImportStep())
 			.next(csvTeamUserTaskProgressStep())
 			.next(dbTeamUsersStep())
 			.next(dbProgressRatesStep())

@@ -265,7 +265,7 @@ public class HomeController {
 			Long teamUsersId = item.getTeamUsersId();
 
 			Double progressRate = item.getProgressRate();
-			Integer elapsedDays = item.getElapsedDays();
+			Integer elapsedDays = (item.getElapsedDays() == null) ? 0 : item.getElapsedDays();
 			Integer predictedEndDuration = (int) (elapsedDays / (progressRate / 100)) - elapsedDays;
 
 			ProgressRatesDto progressRatesDto = new ProgressRatesDto();

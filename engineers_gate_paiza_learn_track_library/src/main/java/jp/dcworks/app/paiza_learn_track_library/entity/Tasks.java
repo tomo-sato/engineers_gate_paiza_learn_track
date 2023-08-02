@@ -32,6 +32,10 @@ public class Tasks extends EntityBase {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	/** 課題カテゴリーID */
+	@Column(name = "task_categories_id", nullable = true)
+	private Integer taskCategoriesId;
+
 	/** 講座ID */
 	@Column(name = "course_id", nullable = true)
 	private Integer courseId;

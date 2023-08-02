@@ -48,6 +48,7 @@ public class TasksService {
 		}
 
 		Tasks teamUserTaskProgress = new Tasks();
+		teamUserTaskProgress.setTaskCategoriesId(NumberUtil.toInteger(csvTeamUserTaskProgress.getTaskCategoriesId()));
 		teamUserTaskProgress.setCourseId(NumberUtil.toInteger(csvTeamUserTaskProgress.getCourseId()));
 		teamUserTaskProgress.setCourseName(csvTeamUserTaskProgress.getCourseName());
 		teamUserTaskProgress.setLessonId(csvTeamUserTaskProgress.getLessonId());

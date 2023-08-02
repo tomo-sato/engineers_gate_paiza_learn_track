@@ -78,6 +78,8 @@ public class CsvReaderConfig {
 				.names(new String[] {
 					"courseId",
 					"courseName",
+					"taskCategoriesId",
+					"taskCategoriesName",
 					"lessonId",
 					"lessonName",
 					"chapterId",

@@ -15,6 +15,12 @@ public class CsvTasks {
 	/** 講座名 */
 	private String courseName;
 
+	/** 課題カテゴリーID */
+	private String taskCategoriesId;
+
+	/** 課題カテゴリー名 */
+	private String taskCategoriesName;
+
 	/** レッスンID */
 	private String lessonId;
 
