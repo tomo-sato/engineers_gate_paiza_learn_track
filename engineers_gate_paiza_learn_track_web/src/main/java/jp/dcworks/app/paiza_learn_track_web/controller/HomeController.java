@@ -29,6 +29,7 @@ import jp.dcworks.app.paiza_learn_track_library.entity.ProgressRates;
 import jp.dcworks.app.paiza_learn_track_library.entity.Tasks;
 import jp.dcworks.app.paiza_learn_track_library.entity.TeamUsers;
 import jp.dcworks.app.paiza_learn_track_web.dto.ProgressRatesDto;
+import jp.dcworks.app.paiza_learn_track_web.dto.RequestHoge;
 import jp.dcworks.app.paiza_learn_track_web.dto.RequestTaskProgressRate;
 import jp.dcworks.app.paiza_learn_track_web.dto.UserProgressRatesDto;
 import jp.dcworks.app.paiza_learn_track_web.dto.UserProgressRatesDto.UserProgressRateDetail;
@@ -108,8 +109,11 @@ public class HomeController {
 	 * @return
 	 * @throws ParseException
 	 */
-	@GetMapping("/detail/{teamUsersId}")
-	public String detail(@RequestParam(name = "reportDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date reportDate, @PathVariable Long teamUsersId, Model model) throws ParseException {
+	@GetMapping("/detail/{teamUsersId}/{weeklyStudyDuration}")
+	public String detail(@RequestParam(name = "reportDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date reportDate,
+			@PathVariable Long teamUsersId,
+			@PathVariable Integer weeklyStudyDuration,
+			Model model) throws ParseException {
 
 		// ユーザー情報取得
 		TeamUsers teamUsers = teamUsersService.getTeamUsers(teamUsersId);
@@ -128,16 +132,35 @@ public class HomeController {
 		TeamUserTaskProgressMap lastAccessLesson = lastAccessLessonMap.get(teamUsersId);
 
 		// 全課題と、ユーザー情報を紐付ける。
-		UserProgressRatesDto userProgressRatesDto = convertUserProgressRatesDto(reportDate, teamUsers, tasksMapList, progressRatesMap, progressRatesAllLessonMap, lastAccessLesson);
+		UserProgressRatesDto userProgressRatesDto = convertUserProgressRatesDto(reportDate, teamUsers, tasksMapList, progressRatesMap, progressRatesAllLessonMap, lastAccessLesson, weeklyStudyDuration);
 
 		model.addAttribute("reportDate", reportDate);
 		model.addAttribute("userProgressRatesDto", userProgressRatesDto);
+		model.addAttribute("weeklyStudyDuration", weeklyStudyDuration);
 
 		if (!model.containsAttribute("requestTaskProgressRate")) {
 			model.addAttribute("requestTaskProgressRate", new RequestTaskProgressRate());
 		}
 		return "detail";
 	}
+
+	@PostMapping("/hoge/{teamUsersId}")
+	public String hoge(@Validated @ModelAttribute RequestHoge requestTaskProgressRate,
+			@PathVariable Long teamUsersId,
+			BindingResult result,
+			RedirectAttributes redirectAttributes) throws ParseException {
+
+		// 日付がないとそもそも機能しないので、チェック無しで取得して、だめなら落とす。
+		String strReportDate = requestTaskProgressRate.getReportDate();
+		String strWeeklyStudyDuration = requestTaskProgressRate.getWeeklyStudyDuration();
+
+		if (strWeeklyStudyDuration.isBlank()) {
+			strWeeklyStudyDuration = "10";
+		}
+
+		return "redirect:/detail/" + teamUsersId + "/" + strWeeklyStudyDuration + "?reportDate=" + strReportDate;
+	}
+
 
 	/**
 	 * [POST]講座別進捗一覧画面、オリジナル課題進捗率登録アクション。
@@ -208,10 +231,11 @@ public class HomeController {
 	 * @param progressRates
 	 * @param progressRatesAllLessonMap
 	 * @param lastAccessLesson
+	 * @param weeklyStudyDuration
 	 * @return
 	 */
 	private UserProgressRatesDto convertUserProgressRatesDto(Date reportDate, TeamUsers teamUsers, List<TasksMap> tasksMapList,
-			ProgressRatesMap progressRatesMap, Map<String, ProgressRates> progressRatesAllLessonMap, TeamUserTaskProgressMap lastAccessLesson) {
+			ProgressRatesMap progressRatesMap, Map<String, ProgressRates> progressRatesAllLessonMap, TeamUserTaskProgressMap lastAccessLesson, Integer weeklyStudyDuration) {
 
 		// 進捗率
 		Double progressRate = progressRatesMap.getProgressRate();
@@ -258,7 +282,7 @@ public class HomeController {
 				taskCategoriesMap.setProgressEstimateHours(NumberUtils.toScaledBigDecimal(progressEstimateHours, 1, RoundingMode.HALF_EVEN));
 
 				// 週10時間ペースの場合。
-				achievedLearningRate = remainingHours.divide(new BigDecimal((double) 10 / 7), 4, RoundingMode.HALF_EVEN);
+				achievedLearningRate = remainingHours.divide(new BigDecimal((double) weeklyStudyDuration / 7), 4, RoundingMode.HALF_EVEN);
 				progressEstimateHours = (double) achievedLearningRate.doubleValue() * 24;
 				taskCategoriesMap.setWeeklyTimeEstimateHours(NumberUtils.toScaledBigDecimal(progressEstimateHours, 1, RoundingMode.HALF_EVEN));
 

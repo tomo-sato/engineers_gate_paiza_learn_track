@@ -11,7 +11,7 @@
 
 	<main id="main" class="main">
 
-		<section class="section">
+		<section class="section dashboard">
 			<div class="row">
 				<div class="col-lg-3">
 					<div class="card">
@@ -52,6 +52,22 @@
 				</div>
 				<div class="col-lg-9">
 					<div class="card">
+						<div class="filter">
+							<form method="post" th:action="@{/hoge/{teamUsersId}(teamUsersId=${userProgressRatesDto.teamUsers.id})}">
+								<input type="hidden" name="reportDate" th:value="${#dates.format(reportDate, 'yyyy-MM-dd')}">
+								<div class="row align-items-center">
+									<div class="col-sm-4">
+										週の学習時間
+									</div>
+									<label class="col-sm-5">
+										<input type="text" name="weeklyStudyDuration" class="form-control col-lg-4" placeholder="未入力：10時間">
+									</label>
+									<div class="col-sm-3">
+										<button type="submit" class="btn btn-primary">更新</button>
+									</div>
+								</div>
+							</form>
+						</div>
 						<div class="card-body">
 							<h5 class="card-title">課題終了目安</h5>
 
@@ -63,7 +79,7 @@
 										<th scope="col" style="width: 200px;">進捗率</th>
 										<th scope="col">残作業時間（時）</th>
 										<th scope="col">終了予測（進捗ペース）</th>
-										<th scope="col">終了予測（週10時間ペース）</th>
+										<th scope="col">終了予測（週 [[${weeklyStudyDuration}]] 時間ペース）</th>
 									</tr>
 								</thead>
 								<tbody>
