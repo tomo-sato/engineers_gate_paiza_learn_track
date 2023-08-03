@@ -14,6 +14,7 @@
 
 	<resultMap id="TasksMap" type="jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TasksMap">
 		<result property="maxTasksId" column="max_tasks_id" />
+		<result property="taskCategoriesId" column="task_categories_id" />
 		<result property="courseId" column="course_id" />
 		<result property="courseName" column="course_name" />
 		<result property="lessonId" column="lesson_id" />
@@ -26,6 +27,7 @@
 	<select id="findGroupByLesson" resultMap="TasksMap">
 		SELECT
 			max(id) as max_tasks_id
+			, task_categories_id
 			, course_id
 			, course_name
 			, lesson_id
@@ -35,7 +37,8 @@
 		FROM
 			tasks
 		GROUP BY
-			course_id
+			task_categories_id
+			, course_id
 			, course_name
 			, lesson_id
 			, lesson_name

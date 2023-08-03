@@ -13,6 +13,9 @@ public class TasksMap {
 	/** 課題ID */
 	private Long maxTasksId;
 
+	/** 課題カテゴリーID */
+	private Long taskCategoriesId;
+
 	/** 講座ID */
 	private Integer courseId;
 

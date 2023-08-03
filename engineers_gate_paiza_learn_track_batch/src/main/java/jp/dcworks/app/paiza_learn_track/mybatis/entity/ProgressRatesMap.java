@@ -15,6 +15,9 @@ public class ProgressRatesMap {
 	/** チームユーザーID */
 	private Long teamUsersId;
 
+	/** 講座カテゴリーID */
+	private Integer taskCategoriesId;
+
 	/** 講座ID */
 	private Integer courseId;
 

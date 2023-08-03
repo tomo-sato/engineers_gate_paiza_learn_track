@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.dcworks.app.paiza_learn_track_web.mybatis.TaskCategoriesMapper">
+
+	<resultMap id="TaskCategoriesMap" type="jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TaskCategoriesMap">
+		<result property="taskCategoriesId" column="task_categories_id" />
+		<result property="taskCategoriesName" column="task_categories_name" />
+		<result property="sumLearningHours" column="sum_learning_hours" />
+		<result property="sumAchievedLearningHours" column="sum_achieved_learning_hours" />
+		<result property="progressRate" column="progress_rate" />
+	</resultMap>
+
+	<!-- tasks テーブルより レッスンでグルーピングした結果を取得する。 -->
+	<select id="findCategory" resultMap="TaskCategoriesMap">
+		SELECT
+			t1.task_categories_id
+			, t1.task_categories_name
+			, t1.sum_learning_hours
+			, t2.sum_achieved_learning_hours
+			, ROUND((t2.sum_achieved_learning_hours / t1.sum_learning_hours) * 100, 1) as progress_rate
+		FROM
+			(
+				SELECT
+					t.task_categories_id
+					, tc.name as task_categories_name
+					, ROUND((sum(t.learning_minutes) / 60), 2) as sum_learning_hours
+				FROM
+					task_categories tc
+						LEFT JOIN tasks t
+							ON tc.id = t.task_categories_id
+				GROUP BY
+					t.task_categories_id
+					, tc.name
+			) t1
+				LEFT JOIN (
+					SELECT
+						team_users_id
+						, task_categories_id
+						, sum(achieved_learning_hours) as sum_achieved_learning_hours
+					FROM
+						progress_rates
+					WHERE
+						team_users_id = #{team_users_id}
+						AND report_date = #{report_date}
+					GROUP BY
+						team_users_id
+						, task_categories_id
+				) t2 ON
+					t1.task_categories_id = t2.task_categories_id
+		ORDER BY
+			t1.task_categories_id
+		;
+	</select>
+
+</mapper>

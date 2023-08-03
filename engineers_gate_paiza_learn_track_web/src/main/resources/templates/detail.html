@@ -13,12 +13,12 @@
 
 		<section class="section">
 			<div class="row">
-				<div class="col-lg-4">
+				<div class="col-lg-3">
 					<div class="card">
 						<div class="card-body pt-4">
 							<div class="card-body profile-card d-flex flex-column align-items-center">
 								<h2 th:text="${userProgressRatesDto.teamUsers.name}">山田太郎</h2>
-								<h3>github：<a href="https://github.com/tomo-sato">tomo-sato</a></h3>
+<!--								<h3>github：<a href="https://github.com/tomo-sato">tomo-sato</a></h3>-->
 							</div>
 							<table class="table table-striped">
 								<tbody>
@@ -50,7 +50,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-8">
+				<div class="col-lg-9">
 					<div class="card">
 						<div class="card-body">
 							<h5 class="card-title">課題終了目安</h5>
@@ -61,46 +61,18 @@
 									<tr>
 										<th scope="col">講座名</th>
 										<th scope="col" style="width: 200px;">進捗率</th>
+										<th scope="col">残作業時間（時）</th>
 										<th scope="col">終了予測（進捗ペース）</th>
 										<th scope="col">終了予測（週10時間ペース）</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
-										<th>01_HTML関連課題（目安時間：32.2時間）</th>
-										<td><b>79.4%</b></td>
-										<td style="white-space: nowrap;">2023-09-25（+61 日）</td>
-										<td style="white-space: nowrap;">2023-09-25（+61 日）</td>
-									</tr>
-									<tr>
-										<th>02_Git関連課題（目安時間：9.0時間）</th>
-										<td><b>79.4%</b></td>
-										<td style="white-space: nowrap;">2023-09-25（+61 日）</td>
-										<td style="white-space: nowrap;">2023-09-25（+61 日）</td>
-									</tr>
-									<tr>
-										<th>03_Java関連課題（目安時間：69.9時間）</th>
-										<td><b>79.4%</b></td>
-										<td style="white-space: nowrap;">2023-09-25（+61 日）</td>
-										<td style="white-space: nowrap;">2023-09-25（+61 日）</td>
-									</tr>
-									<tr>
-										<th>04_SQL関連課題（目安時間：22.0時間）</th>
-										<td><b>79.4%</b></td>
-										<td style="white-space: nowrap;">2023-09-25（+61 日）</td>
-										<td style="white-space: nowrap;">2023-09-25（+61 日）</td>
-									</tr>
-									<tr>
-										<th>05_Webアプリケーション関連課題（目安時間：136.4時間）</th>
-										<td><b>79.4%</b></td>
-										<td style="white-space: nowrap;">2023-09-25（+61 日）</td>
-										<td style="white-space: nowrap;">2023-09-25（+61 日）</td>
-									</tr>
-									<tr>
-										<th>06_Linux関連課題（目安時間：6.2時間）</th>
-										<td><b>79.4%</b></td>
-										<td style="white-space: nowrap;">2023-09-25（+61 日）</td>
-										<td style="white-space: nowrap;">2023-09-25（+61 日）</td>
+									<tr th:each="taskCategoriesMap:${userProgressRatesDto.taskCategoriesMapList}">
+										<th>[[${taskCategoriesMap.taskCategoriesName}]]（目安時間：[[${taskCategoriesMap.sumLearningHours}]]時間）</th>
+										<td><b th:text="${taskCategoriesMap.progressRate != null ? taskCategoriesMap.progressRate + '%' : ''}">79.4%</b></td>
+										<td th:text="${taskCategoriesMap.getRemainingHours()}">2023-09-25（+61 日）</td>
+										<td style="white-space: nowrap;">[[${#dates.format(taskCategoriesMap.progressEstimateDate, 'yyyy-MM-dd')}]]（+[[${taskCategoriesMap.progressEstimateHours / 24}]] 日）</td>
+										<td style="white-space: nowrap;">[[${#dates.format(taskCategoriesMap.weeklyTimeEstimateDate, 'yyyy-MM-dd')}]]（+[[${taskCategoriesMap.weeklyTimeEstimateHours / 24}]] 日）</td>
 									</tr>
 								</tbody>
 							</table>

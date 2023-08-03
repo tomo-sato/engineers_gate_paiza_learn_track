@@ -33,6 +33,10 @@ public class ProgressRates extends EntityBase {
 	@Column(name = "team_users_id", nullable = false)
 	private Long teamUsersId;
 
+	/** 講座カテゴリーID */
+	@Column(name = "task_categories_id", nullable = false)
+	private Integer taskCategoriesId;
+
 	/** 講座ID */
 	@Column(name = "course_id", nullable = false)
 	private Integer courseId;

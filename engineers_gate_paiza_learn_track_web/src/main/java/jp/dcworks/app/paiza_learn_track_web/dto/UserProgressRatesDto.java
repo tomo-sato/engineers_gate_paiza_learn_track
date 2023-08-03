@@ -5,6 +5,7 @@ import java.util.List;
 
 import jp.dcworks.app.paiza_learn_track_library.entity.TeamUsers;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMap;
+import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TaskCategoriesMap;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TeamUserTaskProgressMap;
 import lombok.Data;
 
@@ -30,6 +31,9 @@ public class UserProgressRatesDto {
 
 	/** 終了予測日 */
 	private Date predictedEndDate;
+
+	/** 課題カテゴリーリスト */
+	private List<TaskCategoriesMap> taskCategoriesMapList;
 
 	/** 進捗詳細リスト */
 	private List<UserProgressRateDetail> userProgressRateDetailList;

@@ -32,6 +32,7 @@ public class ProgressRatesService {
 
 		ProgressRates progressRates = new ProgressRates();
 		progressRates.setTeamUsersId(progressRatesMap.getTeamUsersId());
+		progressRates.setTaskCategoriesId(progressRatesMap.getTaskCategoriesId());
 		progressRates.setCourseId(progressRatesMap.getCourseId());
 		progressRates.setCourseName(progressRatesMap.getCourseName());
 		progressRates.setLessonId(progressRatesMap.getLessonId());

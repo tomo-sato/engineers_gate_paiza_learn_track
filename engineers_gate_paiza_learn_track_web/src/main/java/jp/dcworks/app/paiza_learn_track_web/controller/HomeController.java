@@ -1,5 +1,7 @@
 package jp.dcworks.app.paiza_learn_track_web.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,10 +33,12 @@ import jp.dcworks.app.paiza_learn_track_web.dto.RequestTaskProgressRate;
 import jp.dcworks.app.paiza_learn_track_web.dto.UserProgressRatesDto;
 import jp.dcworks.app.paiza_learn_track_web.dto.UserProgressRatesDto.UserProgressRateDetail;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMap;
+import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TaskCategoriesMap;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TasksMap;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TeamUserTaskProgressMap;
 import jp.dcworks.app.paiza_learn_track_web.service.OriginalTaskProgressService;
 import jp.dcworks.app.paiza_learn_track_web.service.ProgressRatesService;
+import jp.dcworks.app.paiza_learn_track_web.service.TaskCategoriesService;
 import jp.dcworks.app.paiza_learn_track_web.service.TasksService;
 import jp.dcworks.app.paiza_learn_track_web.service.TeamUserTaskProgressService;
 import jp.dcworks.app.paiza_learn_track_web.service.TeamUsersService;
@@ -53,6 +57,9 @@ public class HomeController {
 	/** 課題サービス */
 	@Autowired
 	TasksService tasksService;
+	/** 課題カテゴリーサービス */
+	@Autowired
+	TaskCategoriesService taskCategoriesService;
 	/** 課題進捗率サービス */
 	@Autowired
 	ProgressRatesService progressRatesService;
@@ -121,7 +128,7 @@ public class HomeController {
 		TeamUserTaskProgressMap lastAccessLesson = lastAccessLessonMap.get(teamUsersId);
 
 		// 全課題と、ユーザー情報を紐付ける。
-		UserProgressRatesDto userProgressRatesDto = convertUserProgressRatesDto(teamUsers, tasksMapList, progressRatesMap, progressRatesAllLessonMap, lastAccessLesson);
+		UserProgressRatesDto userProgressRatesDto = convertUserProgressRatesDto(reportDate, teamUsers, tasksMapList, progressRatesMap, progressRatesAllLessonMap, lastAccessLesson);
 
 		model.addAttribute("reportDate", reportDate);
 		model.addAttribute("userProgressRatesDto", userProgressRatesDto);
@@ -194,6 +201,7 @@ public class HomeController {
 
 	/**
 	 * DTOコンバータ
+	 * @param reportDate
 	 * @param teamUsers
 	 *
 	 * @param tasksMapList
@@ -202,16 +210,76 @@ public class HomeController {
 	 * @param lastAccessLesson
 	 * @return
 	 */
-	private UserProgressRatesDto convertUserProgressRatesDto(TeamUsers teamUsers, List<TasksMap> tasksMapList,
+	private UserProgressRatesDto convertUserProgressRatesDto(Date reportDate, TeamUsers teamUsers, List<TasksMap> tasksMapList,
 			ProgressRatesMap progressRatesMap, Map<String, ProgressRates> progressRatesAllLessonMap, TeamUserTaskProgressMap lastAccessLesson) {
 
+		// 進捗率
 		Double progressRate = progressRatesMap.getProgressRate();
+		// 経過日数
 		Integer elapsedDays = progressRatesMap.getElapsedDays();
+		// 学習終了予測日数
 		Integer predictedEndDuration = (int) (elapsedDays / (progressRate / 100)) - elapsedDays;
 		// 学習終了予測日
 		Date currentDate = new Date();
 		long millisecondsToAdd = predictedEndDuration * 24 * 60 * 60 * 1000L;
+		// 終了予測
 		Date predictedEndDate = new Date(currentDate.getTime() + millisecondsToAdd);
+
+
+		List<TaskCategoriesMap> taskCategoriesMapList = taskCategoriesService.findCategory(reportDate, teamUsers.getId());
+
+		// 残作業時間の合計を算出
+		BigDecimal totalAchievedLearningHours = new BigDecimal(0);
+		for (TaskCategoriesMap taskCategoriesMap : taskCategoriesMapList) {
+			BigDecimal remainingHours = taskCategoriesMap.getRemainingHours();
+			totalAchievedLearningHours = totalAchievedLearningHours.add(remainingHours);
+		}
+
+
+		// 終了予測を取得するため、現在日時を取得。
+		Date now = new Date();
+		Date tmpTotalDate = null;
+		Date tmpTotalDate2 = null;
+
+		// 終了予測を設定する。
+		// TODO tomo-sato 変数名とか適当すぎてヤバいので、要修正。
+		for (TaskCategoriesMap taskCategoriesMap : taskCategoriesMapList) {
+			// 「残作業時間の割合」を算出。（「残作業時間」 / 「残作業時間の合計」）
+			BigDecimal remainingHours = taskCategoriesMap.getRemainingHours();
+
+			if (remainingHours.compareTo(BigDecimal.ZERO) == 0) {
+				taskCategoriesMap.setProgressEstimateHours(NumberUtils.toScaledBigDecimal(0.0, 1, RoundingMode.HALF_EVEN));
+				taskCategoriesMap.setWeeklyTimeEstimateHours(NumberUtils.toScaledBigDecimal(0.0, 1, RoundingMode.HALF_EVEN));
+			} else {
+				BigDecimal achievedLearningRate = remainingHours.divide(totalAchievedLearningHours, 4, RoundingMode.HALF_EVEN);
+
+				// 実績から必要な残学習時間を算出。（「学習終了予測日数」 * 「残作業時間の割合」）
+				Double progressEstimateHours = (double) ((predictedEndDuration * achievedLearningRate.doubleValue()) * 24);
+				taskCategoriesMap.setProgressEstimateHours(NumberUtils.toScaledBigDecimal(progressEstimateHours, 1, RoundingMode.HALF_EVEN));
+
+				// 週10時間ペースの場合。
+				achievedLearningRate = remainingHours.divide(new BigDecimal((double) 10 / 7), 4, RoundingMode.HALF_EVEN);
+				progressEstimateHours = (double) achievedLearningRate.doubleValue() * 24;
+				taskCategoriesMap.setWeeklyTimeEstimateHours(NumberUtils.toScaledBigDecimal(progressEstimateHours, 1, RoundingMode.HALF_EVEN));
+
+			}
+
+			// 現在日時もしくは、累積している終了日時に加算
+			if (tmpTotalDate == null) {
+				long millisecondsToAddd = (long) (taskCategoriesMap.getProgressEstimateHours().doubleValue() * 60 * 60 * 1000L);
+				long millisecondsToAddd2 = (long) (taskCategoriesMap.getWeeklyTimeEstimateHours().doubleValue() * 60 * 60 * 1000L);
+				tmpTotalDate = new Date(now.getTime() + millisecondsToAddd);
+				tmpTotalDate2 = new Date(now.getTime() + millisecondsToAddd2);
+			} else {
+				long millisecondsToAddd = (long) (taskCategoriesMap.getProgressEstimateHours().doubleValue() * 60 * 60 * 1000L);
+				long millisecondsToAddd2 = (long) (taskCategoriesMap.getWeeklyTimeEstimateHours().doubleValue() * 60 * 60 * 1000L);
+				tmpTotalDate = new Date(tmpTotalDate.getTime() + millisecondsToAddd);
+				tmpTotalDate2 = new Date(tmpTotalDate2.getTime() + millisecondsToAddd2);
+			}
+			taskCategoriesMap.setProgressEstimateDate(tmpTotalDate);
+			taskCategoriesMap.setWeeklyTimeEstimateDate(tmpTotalDate2);
+		}
+
 
 		UserProgressRatesDto retdto = new UserProgressRatesDto();
 		retdto.setTeamUsers(teamUsers);
@@ -219,6 +287,7 @@ public class HomeController {
 		retdto.setLastAccessLesson(lastAccessLesson);
 		retdto.setPredictedEndDuration(predictedEndDuration);
 		retdto.setPredictedEndDate(predictedEndDate);
+		retdto.setTaskCategoriesMapList(taskCategoriesMapList);
 
 		List<UserProgressRateDetail> retList = new ArrayList<UserProgressRateDetail>();
 
