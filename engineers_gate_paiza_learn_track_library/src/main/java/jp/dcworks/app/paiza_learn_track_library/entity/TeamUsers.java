@@ -34,4 +34,8 @@ public class TeamUsers extends EntityBase {
 	/** 名前 */
 	@Column(name = "name", nullable = true)
 	private String name;
+
+	/** Githubアカウント */
+	@Column(name = "github_account", nullable = true)
+	private String githubAccount;
 }

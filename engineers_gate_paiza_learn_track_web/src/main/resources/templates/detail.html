@@ -18,7 +18,7 @@
 						<div class="card-body pt-4">
 							<div class="card-body profile-card d-flex flex-column align-items-center">
 								<h2 th:text="${userProgressRatesDto.teamUsers.name}">山田太郎</h2>
-<!--								<h3>github：<a href="https://github.com/tomo-sato">tomo-sato</a></h3>-->
+								<h3 th:if="${userProgressRatesDto.teamUsers.githubAccount != null}">github：<a th:href="@{https://github.com/{githubAccount}(githubAccount=${userProgressRatesDto.teamUsers.githubAccount})}" target="_blank">[[${userProgressRatesDto.teamUsers.githubAccount}]]</a></h3>
 							</div>
 							<table class="table table-striped">
 								<tbody>
@@ -53,7 +53,7 @@
 				<div class="col-lg-9">
 					<div class="card">
 						<div class="filter">
-							<form method="post" th:action="@{/hoge/{teamUsersId}(teamUsersId=${userProgressRatesDto.teamUsers.id})}">
+							<form method="post" th:action="@{/reloadWeeklyStudyDuration/{teamUsersId}(teamUsersId=${userProgressRatesDto.teamUsers.id})}">
 								<input type="hidden" name="reportDate" th:value="${#dates.format(reportDate, 'yyyy-MM-dd')}">
 								<div class="row align-items-center">
 									<div class="col-sm-4">

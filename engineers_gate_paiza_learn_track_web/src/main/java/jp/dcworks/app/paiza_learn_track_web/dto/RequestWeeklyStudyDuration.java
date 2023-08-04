@@ -12,11 +12,12 @@ import lombok.Data;
  * @author tomo-sato
  */
 @Data
-public class RequestHoge implements Serializable  {
+public class RequestWeeklyStudyDuration implements Serializable  {
 
 	/** 集計日（yyyy-MM-dd） */
 	@NotBlank(message = "パラメータ不正。")
 	private String reportDate;
 
+	/** 週の学習時間 */
 	private String weeklyStudyDuration;
 }

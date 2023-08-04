@@ -28,9 +28,10 @@ import jp.dcworks.app.paiza_learn_track_library.entity.OriginalTaskProgress;
 import jp.dcworks.app.paiza_learn_track_library.entity.ProgressRates;
 import jp.dcworks.app.paiza_learn_track_library.entity.Tasks;
 import jp.dcworks.app.paiza_learn_track_library.entity.TeamUsers;
+import jp.dcworks.app.paiza_learn_track_web.AppConst;
 import jp.dcworks.app.paiza_learn_track_web.dto.ProgressRatesDto;
-import jp.dcworks.app.paiza_learn_track_web.dto.RequestHoge;
 import jp.dcworks.app.paiza_learn_track_web.dto.RequestTaskProgressRate;
+import jp.dcworks.app.paiza_learn_track_web.dto.RequestWeeklyStudyDuration;
 import jp.dcworks.app.paiza_learn_track_web.dto.UserProgressRatesDto;
 import jp.dcworks.app.paiza_learn_track_web.dto.UserProgressRatesDto.UserProgressRateDetail;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMap;
@@ -115,28 +116,12 @@ public class HomeController {
 			@PathVariable Integer weeklyStudyDuration,
 			Model model) throws ParseException {
 
-		// ユーザー情報取得
-		TeamUsers teamUsers = teamUsersService.getTeamUsers(teamUsersId);
-
-		// tasks テーブルより レッスンでグルーピングした結果を表出するリストのベースとする。（ここで取得した結果が全課題。）
-		List<TasksMap> tasksMapList = tasksService.findGroupByLesson();
-		// ユーザーID、集計日で検索した結果を取得する。
-		Map<String, ProgressRates> progressRatesAllLessonMap = progressRatesService.findByTeamUsersIdAndReportDateOrderMap(teamUsersId, reportDate);
-
-		// 学習時間（時）の合計を取得する。
-		Double sumLearningHours = tasksService.findGroupBySumLearningHours();
-		// 受講生の進捗率を取得。
-		ProgressRatesMap progressRatesMap = progressRatesService.getProgressRate(reportDate, sumLearningHours, teamUsersId);
-		// 受講生の最終着手課題を取得する。
-		Map<Long, TeamUserTaskProgressMap> lastAccessLessonMap = teamUserTaskProgressService.getLastAccessLessonMap(reportDate);
-		TeamUserTaskProgressMap lastAccessLesson = lastAccessLessonMap.get(teamUsersId);
-
 		// 全課題と、ユーザー情報を紐付ける。
-		UserProgressRatesDto userProgressRatesDto = convertUserProgressRatesDto(reportDate, teamUsers, tasksMapList, progressRatesMap, progressRatesAllLessonMap, lastAccessLesson, weeklyStudyDuration);
+		UserProgressRatesDto userProgressRatesDto = convertUserProgressRatesDto(teamUsersId, reportDate, weeklyStudyDuration);
 
 		model.addAttribute("reportDate", reportDate);
-		model.addAttribute("userProgressRatesDto", userProgressRatesDto);
 		model.addAttribute("weeklyStudyDuration", weeklyStudyDuration);
+		model.addAttribute("userProgressRatesDto", userProgressRatesDto);
 
 		if (!model.containsAttribute("requestTaskProgressRate")) {
 			model.addAttribute("requestTaskProgressRate", new RequestTaskProgressRate());
@@ -144,8 +129,8 @@ public class HomeController {
 		return "detail";
 	}
 
-	@PostMapping("/hoge/{teamUsersId}")
-	public String hoge(@Validated @ModelAttribute RequestHoge requestTaskProgressRate,
+	@PostMapping("/reloadWeeklyStudyDuration/{teamUsersId}")
+	public String reloadWeeklyStudyDuration(@Validated @ModelAttribute RequestWeeklyStudyDuration requestTaskProgressRate,
 			@PathVariable Long teamUsersId,
 			BindingResult result,
 			RedirectAttributes redirectAttributes) throws ParseException {
@@ -155,7 +140,7 @@ public class HomeController {
 		String strWeeklyStudyDuration = requestTaskProgressRate.getWeeklyStudyDuration();
 
 		if (strWeeklyStudyDuration.isBlank()) {
-			strWeeklyStudyDuration = "10";
+			strWeeklyStudyDuration = AppConst.DEFAULT_WEEKLY_STUDY_DURATION.toString();
 		}
 
 		return "redirect:/detail/" + teamUsersId + "/" + strWeeklyStudyDuration + "?reportDate=" + strReportDate;
@@ -219,23 +204,35 @@ public class HomeController {
 		// 課題進捗率テーブルにデータを登録する。
 		progressRatesService.save(tasks, originalTaskProgress, reportDate);
 
-		return "redirect:/detail/" + teamUsersId + "?reportDate=" + strReportDate;
+		return "redirect:/detail/" + teamUsersId + "/10?reportDate=" + strReportDate;
 	}
 
 	/**
 	 * DTOコンバータ
-	 * @param reportDate
-	 * @param teamUsers
 	 *
-	 * @param tasksMapList
-	 * @param progressRates
-	 * @param progressRatesAllLessonMap
-	 * @param lastAccessLesson
+	 * @param teamUsersId
+	 * @param reportDate
 	 * @param weeklyStudyDuration
 	 * @return
 	 */
-	private UserProgressRatesDto convertUserProgressRatesDto(Date reportDate, TeamUsers teamUsers, List<TasksMap> tasksMapList,
-			ProgressRatesMap progressRatesMap, Map<String, ProgressRates> progressRatesAllLessonMap, TeamUserTaskProgressMap lastAccessLesson, Integer weeklyStudyDuration) {
+	private UserProgressRatesDto convertUserProgressRatesDto(Long teamUsersId, Date reportDate, Integer weeklyStudyDuration) {
+
+		// ユーザー情報取得
+		TeamUsers teamUsers = teamUsersService.getTeamUsers(teamUsersId);
+
+		// ユーザーID、集計日で検索した結果を取得する。
+		Map<String, ProgressRates> progressRatesAllLessonMap = progressRatesService.findByTeamUsersIdAndReportDateOrderMap(teamUsersId, reportDate);
+
+		// 学習時間（時）の合計を取得する。
+		Double sumLearningHours = tasksService.findGroupBySumLearningHours();
+		// 受講生の進捗率を取得。
+		ProgressRatesMap progressRatesMap = progressRatesService.getProgressRate(reportDate, sumLearningHours, teamUsersId);
+		// 受講生の最終着手課題を取得する。
+		Map<Long, TeamUserTaskProgressMap> lastAccessLessonMap = teamUserTaskProgressService.getLastAccessLessonMap(reportDate);
+		TeamUserTaskProgressMap lastAccessLesson = lastAccessLessonMap.get(teamUsersId);
+
+		// tasks テーブルより レッスンでグルーピングした結果を表出するリストのベースとする。（ここで取得した結果が全課題。）
+		List<TasksMap> tasksMapList = tasksService.findGroupByLesson();
 
 		// 進捗率
 		Double progressRate = progressRatesMap.getProgressRate();
@@ -250,7 +247,7 @@ public class HomeController {
 		Date predictedEndDate = new Date(currentDate.getTime() + millisecondsToAdd);
 
 
-		List<TaskCategoriesMap> taskCategoriesMapList = taskCategoriesService.findCategory(reportDate, teamUsers.getId());
+		List<TaskCategoriesMap> taskCategoriesMapList = taskCategoriesService.findCategory(reportDate, teamUsersId);
 
 		// 残作業時間の合計を算出
 		BigDecimal totalAchievedLearningHours = new BigDecimal(0);
