@@ -17,100 +17,100 @@
 
 	<!-- 課題進捗率を算出する。 -->
 	<select id="getProgressRate" resultMap="ProgressRatesMap">
-			SELECT * FROM (
-				SELECT
-					t1.id as team_users_id
-					, t1.task_categories_id
-					, t1.course_id
-					, t1.course_name
-					, t1.lesson_id
-					, t1.lesson_name
-					, t1.achieved_learning_hours
-					, t2.total_learning_hours
-					, (t1.achieved_learning_hours / t2.total_learning_hours) * 100 as task_progress_rate
-					, t1.chapter_last_access_datetime
-				FROM
+		SELECT * FROM (
+			SELECT
+				t1.id as team_users_id
+				, t1.task_categories_id
+				, t1.course_id
+				, t1.course_name
+				, t1.lesson_id
+				, t1.lesson_name
+				, t1.achieved_learning_hours
+				, t2.total_learning_hours
+				, (t1.achieved_learning_hours / t2.total_learning_hours) * 100 as task_progress_rate
+				, t1.chapter_last_access_datetime
+			FROM
+				(
+					SELECT
+						tu.id
+						, tu.email_address
+						, t.task_categories_id
+						, t.course_id
+						, t.course_name
+						, t.lesson_id
+						, t.lesson_name
+						, sum(t.learning_minutes) / 60 as achieved_learning_hours
+						, max(tutp.chapter_last_access_datetime) as chapter_last_access_datetime
+					FROM team_user_task_progress tutp
+						LEFT JOIN team_users tu ON
+							tu.email_address = tutp.email_address
+						INNER JOIN tasks t ON
+							t.chapter_id = tutp.chapter_id
+					WHERE
+						tutp.report_date = #{report_date}
+					GROUP BY
+						tu.id
+						, t.task_categories_id
+						, t.course_id
+						, t.course_name
+						, t.lesson_id
+						, t.lesson_name
+				) t1
+				LEFT JOIN
 					(
 						SELECT
-							tu.id
-							, tu.email_address
-							, t.task_categories_id
-							, t.course_id
+							t.course_id
 							, t.course_name
 							, t.lesson_id
 							, t.lesson_name
-							, sum(t.learning_minutes) / 60 as achieved_learning_hours
-							, max(tutp.chapter_last_access_datetime) as chapter_last_access_datetime
-						FROM team_user_task_progress tutp
-							LEFT JOIN team_users tu ON
-								tu.email_address = tutp.email_address
-							INNER JOIN tasks t ON
-								t.chapter_id = tutp.chapter_id
-						WHERE
-							tutp.report_date = #{report_date}
+							, sum(t.learning_minutes) / 60 as total_learning_hours
+						FROM
+							tasks t
 						GROUP BY
-							tu.id
-							, t.task_categories_id
-							, t.course_id
+							t.course_id
 							, t.course_name
 							, t.lesson_id
 							, t.lesson_name
-					) t1
-					LEFT JOIN
-						(
-							SELECT
-								t.course_id
-								, t.course_name
-								, t.lesson_id
-								, t.lesson_name
-								, sum(t.learning_minutes) / 60 as total_learning_hours
-							FROM
-								tasks t
-							GROUP BY
-								t.course_id
-								, t.course_name
-								, t.lesson_id
-								, t.lesson_name
-						) t2 ON
-							t2.course_id = t1.course_id
-							AND t2.lesson_id = t1.lesson_id
-				ORDER BY
-					t1.id
-					, t1.course_id
-					, t1.lesson_id
-			) as t3
-			UNION
-			SELECT
-				otp.team_users_id
-				, t.task_categories_id
-				, t.course_id
-				, t.course_name
-				, t.lesson_id
-				, t.lesson_name
-				, (t.learning_minutes / 60) * (otp.task_progress_rate / 100) as achieved_learning_hours
-				, (t.learning_minutes / 60) as total_learning_hours
-				, otp.task_progress_rate
-				, REPLACE(otp.report_date, otp.report_date, #{report_date}) as chapter_last_access_datetime
-			FROM
-				original_task_progress otp
-					LEFT JOIN tasks t ON
-						t.chapter_id = otp.chapter_id
-			WHERE
-				otp.id in (
-					SELECT id FROM original_task_progress otp
-					WHERE
-						(otp.team_users_id, otp.chapter_id, otp.report_date) in (
-							SELECT
-								team_users_id
-								, chapter_id
-								, max(report_date)
-							FROM
-								original_task_progress
-							GROUP BY
-								team_users_id
-								, chapter_id
-						)
-				)
+					) t2 ON
+						t2.course_id = t1.course_id
+						AND t2.lesson_id = t1.lesson_id
+			ORDER BY
+				t1.id
+				, t1.course_id
+				, t1.lesson_id
+		) as t3
+		UNION
+		SELECT
+			otp.team_users_id
+			, t.task_categories_id
+			, t.course_id
+			, t.course_name
+			, t.lesson_id
+			, t.lesson_name
+			, (t.learning_minutes / 60) * (otp.task_progress_rate / 100) as achieved_learning_hours
+			, (t.learning_minutes / 60) as total_learning_hours
+			, otp.task_progress_rate
+			, REPLACE(otp.report_date, otp.report_date, #{report_date}) as chapter_last_access_datetime
+		FROM
+			original_task_progress otp
+				LEFT JOIN tasks t ON
+					t.chapter_id = otp.chapter_id
+		WHERE
+			otp.id in (
+				SELECT id FROM original_task_progress otp
+				WHERE
+					(otp.team_users_id, otp.chapter_id, otp.report_date) in (
+						SELECT
+							team_users_id
+							, chapter_id
+							, max(report_date)
+						FROM
+							original_task_progress
+						GROUP BY
+							team_users_id
+							, chapter_id
+					)
+			)
 		LIMIT #{_pagesize}
 		OFFSET #{_skiprows};
 	</select>
