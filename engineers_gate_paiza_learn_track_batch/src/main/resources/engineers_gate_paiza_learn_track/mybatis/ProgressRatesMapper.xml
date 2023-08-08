@@ -87,22 +87,30 @@
 				, t.course_name
 				, t.lesson_id
 				, t.lesson_name
-				, (t.learning_minutes / 60) * (max(otp.task_progress_rate) / 100) as achieved_learning_hours
+				, (t.learning_minutes / 60) * (otp.task_progress_rate / 100) as achieved_learning_hours
 				, (t.learning_minutes / 60) as total_learning_hours
-				, max(otp.task_progress_rate)
-				, REPLACE(max(otp.report_date), max(otp.report_date), #{report_date}) as chapter_last_access_datetime
+				, otp.task_progress_rate
+				, REPLACE(otp.report_date, otp.report_date, #{report_date}) as chapter_last_access_datetime
 			FROM
 				original_task_progress otp
 					LEFT JOIN tasks t ON
 						t.chapter_id = otp.chapter_id
-			GROUP BY
-				otp.team_users_id
-				, t.task_categories_id
-				, t.course_id
-				, t.course_name
-				, t.lesson_id
-				, t.lesson_name
-				, t.learning_minutes
+			WHERE
+				otp.id in (
+					SELECT id FROM original_task_progress otp
+					WHERE
+						(otp.team_users_id, otp.chapter_id, otp.report_date) in (
+							SELECT
+								team_users_id
+								, chapter_id
+								, max(report_date)
+							FROM
+								original_task_progress
+							GROUP BY
+								team_users_id
+								, chapter_id
+						)
+				)
 		LIMIT #{_pagesize}
 		OFFSET #{_skiprows};
 	</select>
