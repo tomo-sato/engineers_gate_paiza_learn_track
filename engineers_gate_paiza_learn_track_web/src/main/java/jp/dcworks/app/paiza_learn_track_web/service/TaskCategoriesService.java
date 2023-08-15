@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import jp.dcworks.app.paiza_learn_track_library.repository.TaskCategoriesRepository;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.TaskCategoriesMapper;
-import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TaskCategoriesMap;
+import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TaskCategoriesMappingEntity;
 
 /**
  * 課題カテゴリーサービスクラス。
@@ -32,7 +32,7 @@ public class TaskCategoriesService {
 	 * @param teamUsersId ユーザーID
 	 * @return
 	 */
-	public List<TaskCategoriesMap> findCategory(Date reportDate, Long teamUsersId) {
+	public List<TaskCategoriesMappingEntity> findCategory(Date reportDate, Long teamUsersId) {
 		return taskCategoriesMapper.findCategory(reportDate, teamUsersId);
 	}
 }

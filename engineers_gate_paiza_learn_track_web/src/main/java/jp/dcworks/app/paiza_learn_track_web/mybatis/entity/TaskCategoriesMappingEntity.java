@@ -14,7 +14,7 @@ import lombok.Data;
  * @author tomo-sato
  */
 @Data
-public class TaskCategoriesMap {
+public class TaskCategoriesMappingEntity {
 
 	/** 課題カテゴリーID */
 	private Long taskCategoriesId;

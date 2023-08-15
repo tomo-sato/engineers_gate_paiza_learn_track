@@ -12,7 +12,7 @@
 	</select>
 
 
-	<resultMap id="TasksMap" type="jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TasksMap">
+	<resultMap id="TasksMap" type="jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TasksMappingEntity">
 		<result property="maxTasksId" column="max_tasks_id" />
 		<result property="taskCategoriesId" column="task_categories_id" />
 		<result property="courseId" column="course_id" />

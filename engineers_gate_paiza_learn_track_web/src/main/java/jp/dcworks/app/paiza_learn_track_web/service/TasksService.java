@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import jp.dcworks.app.paiza_learn_track_library.entity.Tasks;
 import jp.dcworks.app.paiza_learn_track_library.repository.TasksRepository;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.TasksMapper;
-import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TasksMap;
+import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TasksMappingEntity;
 
 /**
  * 課題サービスクラス。
@@ -39,7 +39,7 @@ public class TasksService {
 	 *
 	 * @return
 	 */
-	public List<TasksMap> findGroupByLesson() {
+	public List<TasksMappingEntity> findGroupByLesson() {
 		return tasksMapper.findGroupByLesson();
 	}
 

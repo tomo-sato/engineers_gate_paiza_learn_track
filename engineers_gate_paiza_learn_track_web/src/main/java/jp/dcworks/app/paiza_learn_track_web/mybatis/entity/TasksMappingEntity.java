@@ -8,7 +8,7 @@ import lombok.Data;
  * @author tomo-sato
  */
 @Data
-public class TasksMap {
+public class TasksMappingEntity {
 
 	/** 課題ID */
 	private Long maxTasksId;

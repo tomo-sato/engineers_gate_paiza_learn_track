@@ -14,7 +14,7 @@ import jp.dcworks.app.paiza_learn_track_library.entity.Tasks;
 import jp.dcworks.app.paiza_learn_track_library.repository.ProgressRatesRepository;
 import jp.dcworks.app.paiza_learn_track_library.util.CollectionUtil;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.ProgressRatesMapper;
-import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMap;
+import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMappingEntity;
 
 /**
  * 課題進捗率サービスクラス。
@@ -38,7 +38,7 @@ public class ProgressRatesService {
 	 * @param sumLearningMinutes 学習時間合計
 	 * @return
 	 */
-	public List<ProgressRatesMap> getProgressRate(Date reportDate, Double sumLearningHours) {
+	public List<ProgressRatesMappingEntity> getProgressRate(Date reportDate, Double sumLearningHours) {
 		return progressRatesMapper.getProgressRate(reportDate, sumLearningHours, null);
 	}
 
@@ -50,8 +50,8 @@ public class ProgressRatesService {
 	 * @param teamUsersId ユーザーID
 	 * @return
 	 */
-	public ProgressRatesMap getProgressRate(Date reportDate, Double sumLearningHours, Long teamUsersId) {
-		List<ProgressRatesMap> progressRatesMapList = progressRatesMapper.getProgressRate(reportDate, sumLearningHours, teamUsersId);
+	public ProgressRatesMappingEntity getProgressRate(Date reportDate, Double sumLearningHours, Long teamUsersId) {
+		List<ProgressRatesMappingEntity> progressRatesMapList = progressRatesMapper.getProgressRate(reportDate, sumLearningHours, teamUsersId);
 
 		if (CollectionUtil.isEmpty(progressRatesMapList)) {
 			return null;

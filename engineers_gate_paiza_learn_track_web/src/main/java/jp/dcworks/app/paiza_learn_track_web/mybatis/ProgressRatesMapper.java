@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMap;
+import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMappingEntity;
 
 /**
  * 課題進捗率テーブル関連のマッパーインターフェース。
@@ -24,5 +24,5 @@ public interface ProgressRatesMapper {
 	 * @param teamUsersId ユーザーID
 	 * @return
 	 */
-	List<ProgressRatesMap> getProgressRate(@Param("report_date") Date reportDate, @Param("sum_learning_hours") Double sumLearningHours, @Param("team_users_id") Long teamUsersId);
+	List<ProgressRatesMappingEntity> getProgressRate(@Param("report_date") Date reportDate, @Param("sum_learning_hours") Double sumLearningHours, @Param("team_users_id") Long teamUsersId);
 }

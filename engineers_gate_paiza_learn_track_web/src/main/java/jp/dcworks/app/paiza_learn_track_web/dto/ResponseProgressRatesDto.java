@@ -10,7 +10,7 @@ import lombok.Data;
  * @author tomo-sato
  */
 @Data
-public class ProgressRatesDto {
+public class ResponseProgressRatesDto {
 
 	/** チームユーザーID */
 	private Long teamUsersId;

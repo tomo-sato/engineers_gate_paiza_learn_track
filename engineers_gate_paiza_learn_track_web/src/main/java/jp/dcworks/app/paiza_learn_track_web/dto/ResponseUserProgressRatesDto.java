@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import jp.dcworks.app.paiza_learn_track_library.entity.TeamUsers;
-import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMap;
-import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TaskCategoriesMap;
-import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TeamUserTaskProgressMap;
+import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMappingEntity;
+import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TaskCategoriesMappingEntity;
+import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TeamUserTaskProgressMappingEntity;
 import lombok.Data;
 
 /**
@@ -15,16 +15,16 @@ import lombok.Data;
  * @author tomo-sato
  */
 @Data
-public class UserProgressRatesDto {
+public class ResponseUserProgressRatesDto {
 
 	/** チームユーザー情報 */
 	private TeamUsers teamUsers;
 
 	/** 受講生の進捗率 */
-	private ProgressRatesMap progressRatesMap;
+	private ProgressRatesMappingEntity progressRatesMap;
 
 	/** 最終学習講座 */
-	private TeamUserTaskProgressMap lastAccessLesson;
+	private TeamUserTaskProgressMappingEntity lastAccessLesson;
 
 	/** 学習終了予測日数 */
 	private Integer predictedEndDuration;
@@ -33,7 +33,7 @@ public class UserProgressRatesDto {
 	private Date predictedEndDate;
 
 	/** 課題カテゴリーリスト */
-	private List<TaskCategoriesMap> taskCategoriesMapList;
+	private List<TaskCategoriesMappingEntity> taskCategoriesMapList;
 
 	/** 進捗詳細リスト */
 	private List<UserProgressRateDetail> userProgressRateDetailList;

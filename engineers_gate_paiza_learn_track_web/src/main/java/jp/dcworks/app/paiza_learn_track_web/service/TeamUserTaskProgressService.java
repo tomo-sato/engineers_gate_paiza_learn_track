@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jp.dcworks.app.paiza_learn_track_web.mybatis.TeamUserTaskProgressMapper;
-import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TeamUserTaskProgressMap;
+import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TeamUserTaskProgressMappingEntity;
 
 /**
  * チームユーザー課題進捗サービスクラス。
@@ -29,7 +29,7 @@ public class TeamUserTaskProgressService {
 	 * @param reportDate 集計日
 	 * @return
 	 */
-	public List<TeamUserTaskProgressMap> getLastAccessLesson(Date reportDate) {
+	public List<TeamUserTaskProgressMappingEntity> getLastAccessLesson(Date reportDate) {
 		return teamUserTaskProgressMapper.getLastAccessLesson(reportDate);
 	}
 
@@ -39,11 +39,11 @@ public class TeamUserTaskProgressService {
 	 * @param reportDate 集計日
 	 * @return Map<Long{チームユーザーID}, TeamUserTaskProgressMap>
 	 */
-	public Map<Long, TeamUserTaskProgressMap> getLastAccessLessonMap(Date reportDate) {
-		List<TeamUserTaskProgressMap> list = teamUserTaskProgressMapper.getLastAccessLesson(reportDate);
+	public Map<Long, TeamUserTaskProgressMappingEntity> getLastAccessLessonMap(Date reportDate) {
+		List<TeamUserTaskProgressMappingEntity> list = teamUserTaskProgressMapper.getLastAccessLesson(reportDate);
 
-		Map<Long, TeamUserTaskProgressMap> retMap = new HashMap<Long, TeamUserTaskProgressMap>();
-		for (TeamUserTaskProgressMap item : list) {
+		Map<Long, TeamUserTaskProgressMappingEntity> retMap = new HashMap<Long, TeamUserTaskProgressMappingEntity>();
+		for (TeamUserTaskProgressMappingEntity item : list) {
 			Long id = item.getTeamUsersId();
 			retMap.put(id, item);
 		}

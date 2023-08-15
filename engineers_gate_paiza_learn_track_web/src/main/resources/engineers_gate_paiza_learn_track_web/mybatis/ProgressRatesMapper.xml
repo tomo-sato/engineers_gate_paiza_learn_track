@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jp.dcworks.app.paiza_learn_track_web.mybatis.ProgressRatesMapper">
 
-	<resultMap id="ProgressRatesMap" type="jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMap">
+	<resultMap id="ProgressRatesMap" type="jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMappingEntity">
 		<result property="teamUsersId" column="id" />
 		<result property="name" column="name" />
 		<result property="learningStartDate" column="learning_start_date" />

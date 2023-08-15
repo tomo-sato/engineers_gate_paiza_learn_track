@@ -10,7 +10,7 @@ import lombok.Data;
  * @author tomo-sato
  */
 @Data
-public class TeamUserTaskProgressMap {
+public class TeamUserTaskProgressMappingEntity {
 
 	/** チームユーザーID */
 	private Long teamUsersId;

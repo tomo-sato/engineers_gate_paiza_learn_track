@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TaskCategoriesMap;
+import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TaskCategoriesMappingEntity;
 
 /**
  * 課題カテゴリーテーブル関連のマッパーインターフェース。
@@ -23,5 +23,5 @@ public interface TaskCategoriesMapper {
 	 * @param teamUsersId ユーザーID
 	 * @return
 	 */
-	List<TaskCategoriesMap> findCategory(@Param("report_date") Date reportDate, @Param("team_users_id") Long teamUsersId);
+	List<TaskCategoriesMappingEntity> findCategory(@Param("report_date") Date reportDate, @Param("team_users_id") Long teamUsersId);
 }

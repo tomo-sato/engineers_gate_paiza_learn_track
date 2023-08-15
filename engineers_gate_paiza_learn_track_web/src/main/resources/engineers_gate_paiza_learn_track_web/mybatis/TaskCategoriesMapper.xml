@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jp.dcworks.app.paiza_learn_track_web.mybatis.TaskCategoriesMapper">
 
-	<resultMap id="TaskCategoriesMap" type="jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TaskCategoriesMap">
+	<resultMap id="TaskCategoriesMap" type="jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TaskCategoriesMappingEntity">
 		<result property="taskCategoriesId" column="task_categories_id" />
 		<result property="taskCategoriesName" column="task_categories_name" />
 		<result property="sumLearningHours" column="sum_learning_hours" />

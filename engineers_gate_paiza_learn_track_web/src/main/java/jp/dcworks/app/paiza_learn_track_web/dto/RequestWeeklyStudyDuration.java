@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
- * 進捗率更新DTOクラス。
+ * 週の学習時間更新DTOクラス。
  *
  * @author tomo-sato
  */

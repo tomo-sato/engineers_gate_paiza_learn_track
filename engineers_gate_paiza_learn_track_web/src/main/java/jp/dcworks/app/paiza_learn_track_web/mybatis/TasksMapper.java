@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TasksMap;
+import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.TasksMappingEntity;
 
 /**
  * 課題テーブル関連のマッパーインターフェース。
@@ -26,5 +26,5 @@ public interface TasksMapper {
 	 *
 	 * @return
 	 */
-	List<TasksMap> findGroupByLesson();
+	List<TasksMappingEntity> findGroupByLesson();
 }
