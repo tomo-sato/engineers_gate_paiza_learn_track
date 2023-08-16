@@ -23,11 +23,11 @@
 							<table class="table table-striped">
 								<tbody>
 									<tr>
-										<th style="white-space: nowrap;">学習開始日（経過日数）</th>
+										<th style="white-space: nowrap;">学習開始日</th>
 										<td style="white-space: nowrap;" th:text="|${#dates.format(userProgressRatesDto.progressRatesMap.learningStartDate, 'yyyy-MM-dd')}（${userProgressRatesDto.progressRatesMap.elapsedDays} 日）|">2022-12-01（239 日）</td>
 									</tr>
 									<tr>
-										<th style="white-space: nowrap;">終了予測（学習終了予測日数）</th>
+										<th style="white-space: nowrap;">終了予測</th>
 										<td style="white-space: nowrap;" th:text="|${#dates.format(userProgressRatesDto.predictedEndDate, 'yyyy-MM-dd')}（+${userProgressRatesDto.predictedEndDuration} 日）|">2023-09-28（+62 日）</td>
 									</tr>
 								</tbody>
@@ -126,12 +126,13 @@
 												{
 													x: new Date('2023-09-07').getTime(),
 													label: {
-														borderColor: '#FF4560',
+														borderColor: '#B3424A',
 														position: 'bottom',
 														orientation: 'horizontal',
 														style: {
 															color: '#fff',
-															background: '#FF4560',
+															background: '#B3424A',
+															fontSize: '14px',
 														},
 														text: '09/07',
 													}
@@ -139,12 +140,13 @@
 												{
 													x: new Date('2023-08-26').getTime(),
 													label: {
-														borderColor: '#FF4560',
+														borderColor: '#FF0000',
 														position: 'bottom',
 														orientation: 'horizontal',
 														style: {
 															color: '#fff',
-															background: '#FF4560',
+															background: '#FF0000',
+															fontSize: '20px',
 														},
 														text: '08/26',
 													}
@@ -152,12 +154,13 @@
 												{
 													x: new Date('2023-10-21').getTime(),
 													label: {
-														borderColor: '#FF4560',
+														borderColor: '#B3424A',
 														position: 'bottom',
 														orientation: 'horizontal',
 														style: {
 															color: '#fff',
-															background: '#FF4560',
+															background: '#B3424A',
+															fontSize: '14px',
 														},
 														text: '10/21',
 													}
@@ -165,12 +168,13 @@
 												{
 													x: new Date('2023-10-01').getTime(),
 													label: {
-														borderColor: '#FF4560',
+														borderColor: '#FF0000',
 														position: 'bottom',
 														orientation: 'horizontal',
 														style: {
 															color: '#fff',
-															background: '#FF4560',
+															background: '#FF0000',
+															fontSize: '20px',
 														},
 														text: '10/01',
 													}
@@ -184,11 +188,12 @@
 														size: 0,
 													},
 													label: {
-														borderColor: '#FF4560',
-														offsetY: 30,
+														borderColor: '#B3424A',
+														offsetY: 40,
 														style: {
 															color: '#fff',
-															background: '#FF4560',
+															background: '#B3424A',
+															fontSize: '14px',
 														},
 														text: '03_Java関連課題',
 													}
@@ -200,11 +205,12 @@
 														size: 0,
 													},
 													label: {
-														borderColor: '#FF4560',
-														offsetY: -15,
+														borderColor: '#FF0000',
+														offsetY: -20,
 														style: {
 															color: '#fff',
-															background: '#FF4560',
+															background: '#FF0000',
+															fontSize: '20px',
 														},
 														text: '03_Java関連課題',
 													}
@@ -216,11 +222,12 @@
 														size: 0,
 													},
 													label: {
-														borderColor: '#FF4560',
-														offsetY: 30,
+														borderColor: '#B3424A',
+														offsetY: 40,
 														style: {
 															color: '#fff',
-															background: '#FF4560',
+															background: '#B3424A',
+															fontSize: '14px',
 														},
 														text: '05_Webアプリケーション関連課題',
 													}
@@ -232,11 +239,12 @@
 														size: 0,
 													},
 													label: {
-														borderColor: '#FF4560',
-														offsetY: -15,
+														borderColor: '#FF0000',
+														offsetY: -20,
 														style: {
 															color: '#fff',
-															background: '#FF4560',
+															background: '#FF0000',
+															fontSize: '20px',
 														},
 														text: '05_Webアプリケーション関連課題',
 													}
@@ -269,10 +277,14 @@
 												}
 											}]
 										},
+										colors: ['#87CEFA', '#008000'],
 										dataLabels: {
 											enabled: true,
 											formatter: function(val, opt) {
 												return `${val}%`;
+											},
+											style: {
+												fontSize: '18px',
 											},
 										},
 										stroke: {
