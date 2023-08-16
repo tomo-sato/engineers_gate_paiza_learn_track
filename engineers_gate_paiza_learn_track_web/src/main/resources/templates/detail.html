@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 
 <!-- ======= Head ======= -->
 <div th:replace="~{shoulder_fragment::head(title = 'EG進捗管理 - 進捗詳細')}"></div>
@@ -114,7 +114,7 @@
 										series: [
 											{
 												name: "進捗ペース",
-												data: [{ x: '2023-08-15', y: 0 }, { x: '2023-08-17', y: 10 }, { x: '2023-08-17', y: 20 }, { x: '2023-09-07', y: 50 }, { x: '2023-09-18', y: 60 }, { x: '2023-10-21', y: 95 }, { x: '2023-10-21', y: 100 }]
+												data: [{ x: '2023-08-15', y: 0 }, { x: '2023-08-17', y: 13 }, { x: '2023-08-17', y: 23 }, { x: '2023-09-07', y: 53 }, { x: '2023-09-18', y: 63 }, { x: '2023-10-21', y: 93 }, { x: '2023-10-21', y: 100 }]
 											},
 											{
 												name: "週 10 時間ペース",
@@ -270,7 +270,10 @@
 											}]
 										},
 										dataLabels: {
-											enabled: true
+											enabled: true,
+											formatter: function(val, opt) {
+												return `${val}%`;
+											},
 										},
 										stroke: {
 											curve: 'straight'
@@ -300,6 +303,11 @@
 											type: 'numeric',
 											min: 0,
 											max: 100,
+											labels: {
+												formatter: function (value) {
+													return value + "%";
+												}
+											},
 										},
 										tooltip: {
 											enabled: false,
@@ -307,6 +315,9 @@
 												format: 'MM/dd',
 											}
 										},
+										legend: {
+											position: 'top'
+										}
 									}).render();
 								});
 							</script>

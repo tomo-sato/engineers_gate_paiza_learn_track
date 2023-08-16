@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 
 <!-- ======= Head ======= -->
 <div th:replace="~{shoulder_fragment::head(title = 'EG進捗管理 - 進捗一覧')}"></div>
@@ -31,10 +31,10 @@
 										<th scope="col">名前</th>
 										<th scope="col">最終学習講座名</th>
 										<th scope="col">進捗</th>
-										<th scope="col">学習開始日（経過日数）</th>
-										<th scope="col">終了予測（学習終了予測日数）</th>
-										<th scope="col">進捗率</th>
-										<th scope="col">最終受講日</th>
+										<th scope="col" style="width: 250px;">学習開始日（経過日数）</th>
+										<th scope="col" style="width: 250px;">終了予測（学習終了予測日数）</th>
+										<th scope="col" style="width: 200px;">進捗率</th>
+										<th scope="col" style="width: 150px;">最終受講日</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -45,7 +45,69 @@
 										<td>[[${progressRates.lessonName}]]<br>【[[${progressRates.chapterName}]]】</td>
 										<td style="white-space: nowrap;" th:text="|${#dates.format(progressRates.learningStartDate, 'yyyy-MM-dd')}（${progressRates.elapsedDays} 日）|">2023-07-05（10日）</td>
 										<td style="white-space: nowrap;" th:text="|${#dates.format(progressRates.predictedEndDate, 'yyyy-MM-dd')}（+${progressRates.predictedEndDuration} 日）|">2023-07-05（10日）</td>
-										<td><b th:text="|${progressRates.progressRate}%|">100.00%</b></td>
+										<td>&nbsp;
+											<div th:id="|chart_${progressRates.teamUsersId}|"></div>
+											<script>
+												document.addEventListener("DOMContentLoaded", () => {
+													new ApexCharts(document.querySelector("#chart_[[${progressRates.teamUsersId}]]"), {
+														series: [['[' + ${progressRates.progressRate} + ']']],
+														chart: {
+															height: 100,
+															type: 'radialBar',
+															offsetY: -20,
+															sparkline: {
+																enabled: true
+															}
+														},
+														plotOptions: {
+															radialBar: {
+																startAngle: -90,
+																endAngle: 90,
+																track: {
+																	background: "#e7e7e7",
+																	strokeWidth: '97%',
+																	margin: 5, // margin is in pixels
+																	dropShadow: {
+																		enabled: true,
+																		top: 2,
+																		left: 0,
+																		color: '#999',
+																		opacity: 1,
+																		blur: 2
+																	}
+																},
+																dataLabels: {
+																	name: {
+																		show: false
+																	},
+																	value: {
+																		offsetY: -2,
+																		fontSize: '20px'
+																	}
+																}
+															}
+														},
+														grid: {
+															padding: {
+																top: -10
+															}
+														},
+														fill: {
+															type: 'gradient',
+															gradient: {
+																shade: 'light',
+																shadeIntensity: 0.4,
+																inverseColors: false,
+																opacityFrom: 1,
+																opacityTo: 1,
+																stops: [0, 50, 53, 91]
+															},
+														},
+														labels: ['Average Results'],
+													}).render();
+												});
+											</script>
+										</td>
 										<td style="white-space: nowrap;" th:text="${#dates.format(progressRates.chapterLastAccessDatetime, 'yyyy-MM-dd')}">2016-05-25</td>
 									</tr>
 								</tbody>
