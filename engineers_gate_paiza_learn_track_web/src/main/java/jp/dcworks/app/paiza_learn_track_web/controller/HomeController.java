@@ -29,9 +29,13 @@ import jp.dcworks.app.paiza_learn_track_library.entity.ProgressRates;
 import jp.dcworks.app.paiza_learn_track_library.entity.Tasks;
 import jp.dcworks.app.paiza_learn_track_library.entity.TeamUsers;
 import jp.dcworks.app.paiza_learn_track_web.AppConst;
-import jp.dcworks.app.paiza_learn_track_web.dto.ResponseProgressRatesDto;
+import jp.dcworks.app.paiza_learn_track_web.dto.GrafUserProgressRatesDto;
+import jp.dcworks.app.paiza_learn_track_web.dto.GrafUserProgressRatesDto.Annotations;
+import jp.dcworks.app.paiza_learn_track_web.dto.GrafUserProgressRatesDto.Series;
+import jp.dcworks.app.paiza_learn_track_web.dto.GrafUserProgressRatesDto.Series.SeriesData;
 import jp.dcworks.app.paiza_learn_track_web.dto.RequestTaskProgressRate;
 import jp.dcworks.app.paiza_learn_track_web.dto.RequestWeeklyStudyDuration;
+import jp.dcworks.app.paiza_learn_track_web.dto.ResponseProgressRatesDto;
 import jp.dcworks.app.paiza_learn_track_web.dto.ResponseUserProgressRatesDto;
 import jp.dcworks.app.paiza_learn_track_web.dto.ResponseUserProgressRatesDto.UserProgressRateDetail;
 import jp.dcworks.app.paiza_learn_track_web.mybatis.entity.ProgressRatesMappingEntity;
@@ -118,15 +122,56 @@ public class HomeController {
 
 		// 全課題と、ユーザー情報を紐付ける。
 		ResponseUserProgressRatesDto userProgressRatesDto = convertUserProgressRatesDto(teamUsersId, reportDate, weeklyStudyDuration);
+		GrafUserProgressRatesDto grafUserProgressRatesDto = convertGrafUserProgressRatesDto(userProgressRatesDto.getTaskCategoriesMapList(), weeklyStudyDuration);
 
 		model.addAttribute("reportDate", reportDate);
 		model.addAttribute("weeklyStudyDuration", weeklyStudyDuration);
 		model.addAttribute("userProgressRatesDto", userProgressRatesDto);
+		model.addAttribute("grafUserProgressRates", grafUserProgressRatesDto);
 
 		if (!model.containsAttribute("requestTaskProgressRate")) {
 			model.addAttribute("requestTaskProgressRate", new RequestTaskProgressRate());
 		}
 		return "detail";
+	}
+
+	private GrafUserProgressRatesDto convertGrafUserProgressRatesDto(List<TaskCategoriesMappingEntity> taskCategoriesMapList, Integer weeklyStudyDuration) throws ParseException {
+		GrafUserProgressRatesDto grafUserProgressRatesDto = new GrafUserProgressRatesDto();
+		List<Series> series = new ArrayList<Series>();
+		Series series2 = new Series("進捗ペース");
+		Series series1 = new Series("週 " + weeklyStudyDuration + " 時間ペース");
+		Annotations annotations = new Annotations();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		BigDecimal tmpRate = new BigDecimal(0);
+
+		series2.addData(new SeriesData(sdf.format(new Date()), 0));
+		series1.addData(new SeriesData(sdf.format(new Date()), 0));
+
+		for (TaskCategoriesMappingEntity taskCategoriesMappingEntity : taskCategoriesMapList) {
+			String taskCategoriesName = taskCategoriesMappingEntity.getTaskCategoriesName();
+			BigDecimal progressEstimateRate = taskCategoriesMappingEntity.getProgressEstimateRate();
+			tmpRate = tmpRate.add(progressEstimateRate);
+
+			Date progressEstimateDate = taskCategoriesMappingEntity.getProgressEstimateDate();
+			Date weeklyTimeEstimateDate = taskCategoriesMappingEntity.getWeeklyTimeEstimateDate();
+
+			series2.addData(new SeriesData(sdf.format(progressEstimateDate), tmpRate.intValue()));
+			series1.addData(new SeriesData(sdf.format(weeklyTimeEstimateDate), tmpRate.intValue()));
+
+			if ("03_Java関連課題".equals(taskCategoriesName)
+					|| "05_Webアプリケーション関連課題".equals(taskCategoriesName)) {
+
+				annotations.setAnnotations(progressEstimateDate, tmpRate.intValue(), taskCategoriesName, 2);
+				annotations.setAnnotations(weeklyTimeEstimateDate, tmpRate.intValue(), taskCategoriesName, 1);
+			}
+		}
+
+		series.add(series1);
+		series.add(series2);
+		grafUserProgressRatesDto.setSeries(series);
+		grafUserProgressRatesDto.setAnnotations(annotations);
+		return grafUserProgressRatesDto;
 	}
 
 	@PostMapping("/reloadWeeklyStudyDuration/{teamUsersId}")
@@ -239,10 +284,10 @@ public class HomeController {
 		// 経過日数
 		Integer elapsedDays = progressRatesMap.getElapsedDays();
 		// 学習終了予測日数
-		Integer predictedEndDuration = (int) (elapsedDays / (progressRate / 100)) - elapsedDays;
+		Double predictedEndDuration = (elapsedDays / (progressRate / 100)) - elapsedDays;
 		// 学習終了予測日
 		Date currentDate = new Date();
-		long millisecondsToAdd = predictedEndDuration * 24 * 60 * 60 * 1000L;
+		long millisecondsToAdd = predictedEndDuration.intValue() * 24 * 60 * 60 * 1000L;
 		// 終了予測
 		Date predictedEndDate = new Date(currentDate.getTime() + millisecondsToAdd);
 
@@ -271,18 +316,21 @@ public class HomeController {
 			if (remainingHours.compareTo(BigDecimal.ZERO) == 0) {
 				taskCategoriesMap.setProgressEstimateHours(NumberUtils.toScaledBigDecimal(0.0, 1, RoundingMode.HALF_EVEN));
 				taskCategoriesMap.setWeeklyTimeEstimateHours(NumberUtils.toScaledBigDecimal(0.0, 1, RoundingMode.HALF_EVEN));
+
+				taskCategoriesMap.setProgressEstimateRate(NumberUtils.toScaledBigDecimal(0.0, 1, RoundingMode.HALF_EVEN));
 			} else {
 				BigDecimal achievedLearningRate = remainingHours.divide(totalAchievedLearningHours, 4, RoundingMode.HALF_EVEN);
 
 				// 実績から必要な残学習時間を算出。（「学習終了予測日数」 * 「残作業時間の割合」）
 				Double progressEstimateHours = (double) ((predictedEndDuration * achievedLearningRate.doubleValue()) * 24);
+				Double progressEstimateRate = (predictedEndDuration == 0) ? 0 : (progressEstimateHours / (predictedEndDuration * 24)) * 100;
 				taskCategoriesMap.setProgressEstimateHours(NumberUtils.toScaledBigDecimal(progressEstimateHours, 1, RoundingMode.HALF_EVEN));
+				taskCategoriesMap.setProgressEstimateRate(NumberUtils.toScaledBigDecimal(progressEstimateRate, 1, RoundingMode.HALF_EVEN));
 
 				// 週10時間ペースの場合。
 				achievedLearningRate = remainingHours.divide(new BigDecimal((double) weeklyStudyDuration / 7), 4, RoundingMode.HALF_EVEN);
 				progressEstimateHours = (double) achievedLearningRate.doubleValue() * 24;
 				taskCategoriesMap.setWeeklyTimeEstimateHours(NumberUtils.toScaledBigDecimal(progressEstimateHours, 1, RoundingMode.HALF_EVEN));
-
 			}
 
 			// 現在日時もしくは、累積している終了日時に加算
@@ -306,7 +354,7 @@ public class HomeController {
 		retdto.setTeamUsers(teamUsers);
 		retdto.setProgressRatesMap(progressRatesMap);
 		retdto.setLastAccessLesson(lastAccessLesson);
-		retdto.setPredictedEndDuration(predictedEndDuration);
+		retdto.setPredictedEndDuration(predictedEndDuration.intValue());
 		retdto.setPredictedEndDate(predictedEndDate);
 		retdto.setTaskCategoriesMapList(taskCategoriesMapList);
 

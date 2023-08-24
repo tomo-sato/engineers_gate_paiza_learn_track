@@ -39,6 +39,9 @@ public class TaskCategoriesMappingEntity {
 	/** 終了予測（進捗ペース）の時間 */
 	private BigDecimal progressEstimateHours;
 
+	/** 終了予測（進捗ペース）の割合 */
+	private BigDecimal progressEstimateRate;
+
 	/** 終了予測（週10時間ペース）の日にち */
 	private Date weeklyTimeEstimateDate;
 

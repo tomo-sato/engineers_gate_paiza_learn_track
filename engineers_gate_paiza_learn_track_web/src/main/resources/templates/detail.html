@@ -78,6 +78,7 @@
 										<th scope="col">講座名</th>
 										<th scope="col" style="width: 200px;">進捗率</th>
 										<th scope="col">残学習時間（時）</th>
+										<th scope="col">残学習時間の割合</th>
 										<th scope="col">終了予測（進捗ペース）</th>
 										<th scope="col">終了予測（週 [[${weeklyStudyDuration}]] 時間ペース）</th>
 									</tr>
@@ -86,7 +87,8 @@
 									<tr th:each="taskCategoriesMap:${userProgressRatesDto.taskCategoriesMapList}">
 										<th>[[${taskCategoriesMap.taskCategoriesName}]]（目安時間：[[${taskCategoriesMap.sumLearningHours}]]時間）</th>
 										<td><b th:text="${taskCategoriesMap.progressRate != null ? taskCategoriesMap.progressRate + '%' : ''}">79.4%</b></td>
-										<td th:text="${taskCategoriesMap.getRemainingHours()}">2023-09-25（+61 日）</td>
+										<td th:text="${taskCategoriesMap.getRemainingHours()}">1.5</td>
+										<td th:text="${taskCategoriesMap.progressEstimateRate != null ? taskCategoriesMap.progressEstimateRate + '%' : ''}">79.4%</td>
 										<td style="white-space: nowrap;">[[${#dates.format(taskCategoriesMap.progressEstimateDate, 'yyyy-MM-dd')}]]（+[[${taskCategoriesMap.progressEstimateHours / 24}]] 日）</td>
 										<td style="white-space: nowrap;">[[${#dates.format(taskCategoriesMap.weeklyTimeEstimateDate, 'yyyy-MM-dd')}]]（+[[${taskCategoriesMap.weeklyTimeEstimateHours / 24}]] 日）</td>
 									</tr>
@@ -101,160 +103,18 @@
 			<div class="row">
 				<div class="col-lg-12">
 
-					<div class="card" th:if="${userProgressRatesDto.teamUsers.id == 7}">
+					<div class="card">
 						<div class="card-body">
-							<h5 class="card-title">Line Chart</h5>
+							<h5 class="card-title">想定学習推移</h5>
 
 							<!-- Line Chart -->
 							<div id="lineChart"></div>
 
-							<script>
+							<script th:inline="javascript">
 								document.addEventListener("DOMContentLoaded", () => {
 									new ApexCharts(document.querySelector("#lineChart"), {
-										series: [
-											{
-												name: "進捗ペース",
-												data: [
-													{ x: '2023-08-15', y: 0 }, { x: '2023-08-17', y: 13 }, { x: '2023-08-17', y: 23 }, { x: '2023-09-07', y: 53 }, { x: '2023-09-18', y: 63 }, { x: '2023-10-21', y: 93 }, { x: '2023-10-21', y: 100 }
-												]
-											},
-											{
-												name: "週 10 時間ペース",
-												data: [
-													{ x: '2023-08-15', y: 0 }, { x: '2023-08-16', y: 10 }, { x: '2023-08-16', y: 20 }, { x: '2023-08-26', y: 50 }, { x: '2023-08-31', y: 60 }, { x: '2023-10-01', y:95 }, { x: '2023-10-01', y: 100 }
-												]
-											}
-										],
-										annotations: {
-											xaxis: [
-												{
-													x: new Date('2023-09-07').getTime(),
-													label: {
-														borderColor: '#B3424A',
-														position: 'bottom',
-														orientation: 'horizontal',
-														style: {
-															color: '#fff',
-															background: '#B3424A',
-															fontSize: '14px',
-														},
-														text: '09/07',
-													}
-												},
-												{
-													x: new Date('2023-08-26').getTime(),
-													label: {
-														borderColor: '#FF0000',
-														position: 'bottom',
-														orientation: 'horizontal',
-														style: {
-															color: '#fff',
-															background: '#FF0000',
-															fontSize: '20px',
-														},
-														text: '08/26',
-													}
-												},
-												{
-													x: new Date('2023-10-21').getTime(),
-													label: {
-														borderColor: '#B3424A',
-														position: 'bottom',
-														orientation: 'horizontal',
-														style: {
-															color: '#fff',
-															background: '#B3424A',
-															fontSize: '14px',
-														},
-														text: '10/21',
-													}
-												},
-												{
-													x: new Date('2023-10-01').getTime(),
-													label: {
-														borderColor: '#FF0000',
-														position: 'bottom',
-														orientation: 'horizontal',
-														style: {
-															color: '#fff',
-															background: '#FF0000',
-															fontSize: '20px',
-														},
-														text: '10/01',
-													}
-												},
-											],
-											points: [
-												{
-													x: new Date('2023-09-07').getTime(),
-													y: 50,
-													marker: {
-														size: 0,
-													},
-													label: {
-														borderColor: '#B3424A',
-														offsetY: 40,
-														style: {
-															color: '#fff',
-															background: '#B3424A',
-															fontSize: '14px',
-														},
-														text: '03_Java関連課題',
-													}
-												},
-												{
-													x: new Date('2023-08-26').getTime(),
-													y: 50,
-													marker: {
-														size: 0,
-													},
-													label: {
-														borderColor: '#FF0000',
-														offsetY: -20,
-														style: {
-															color: '#fff',
-															background: '#FF0000',
-															fontSize: '20px',
-														},
-														text: '03_Java関連課題',
-													}
-												},
-												{
-													x: new Date('2023-10-21').getTime(),
-													y: 95,
-													marker: {
-														size: 0,
-													},
-													label: {
-														borderColor: '#B3424A',
-														offsetY: 40,
-														style: {
-															color: '#fff',
-															background: '#B3424A',
-															fontSize: '14px',
-														},
-														text: '05_Webアプリケーション関連課題',
-													}
-												},
-												{
-													x: new Date('2023-10-01').getTime(),
-													y: 95,
-													marker: {
-														size: 0,
-													},
-													label: {
-														borderColor: '#FF0000',
-														offsetY: -20,
-														style: {
-															color: '#fff',
-															background: '#FF0000',
-															fontSize: '20px',
-														},
-														text: '05_Webアプリケーション関連課題',
-													}
-												},
-											],
-										},
+										series: /*[[${grafUserProgressRates.series}]]*/ '',
+										annotations: /*[[${grafUserProgressRates.annotations}]]*/ '',
 										chart: {
 											height: 450,
 											type: 'line',
@@ -312,8 +172,8 @@
 													hour: 'HH:mm'
 												}
 											},
-											min: new Date('2023-08-10').getTime(),
-											max: new Date('2023-10-31').getTime(),
+//											min: new Date('2023-08-10').getTime(),
+//											max: new Date('2023-10-31').getTime(),
 										},
 										yaxis: {
 											type: 'numeric',
