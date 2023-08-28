@@ -172,8 +172,8 @@
 													hour: 'HH:mm'
 												}
 											},
-//											min: new Date('2023-08-10').getTime(),
-//											max: new Date('2023-10-31').getTime(),
+											min: new Date('/*[[${#dates.format(grafUserProgressRates.minDate, "yyyy-MM-dd")}]]*/').getTime(),
+											max: new Date('/*[[${#dates.format(grafUserProgressRates.maxDate, "yyyy-MM-dd")}]]*/').getTime(),
 										},
 										yaxis: {
 											type: 'numeric',

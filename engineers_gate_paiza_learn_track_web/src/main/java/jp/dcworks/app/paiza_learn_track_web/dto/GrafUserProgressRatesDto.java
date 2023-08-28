@@ -24,6 +24,9 @@ public class GrafUserProgressRatesDto {
 	/** グラフのメタデータ */
 	private Annotations annotations;
 
+	private Date minDate;
+	private Date maxDate;
+
 	@Data
 	public static class Series {
 		private String name;
@@ -61,7 +64,7 @@ public class GrafUserProgressRatesDto {
 		private List<Points> points = new ArrayList<Points>();
 
 		public void setAnnotations(Date x, int y, String text, int axisType) {
-			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 			Xaxis xaxis = new Xaxis(x, sdf.format(x), axisType);
 			Points points = new Points(x, y, text, axisType);

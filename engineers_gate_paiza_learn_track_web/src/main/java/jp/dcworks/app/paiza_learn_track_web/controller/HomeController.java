@@ -124,6 +124,9 @@ public class HomeController {
 		ResponseUserProgressRatesDto userProgressRatesDto = convertUserProgressRatesDto(teamUsersId, reportDate, weeklyStudyDuration);
 		GrafUserProgressRatesDto grafUserProgressRatesDto = convertGrafUserProgressRatesDto(userProgressRatesDto.getTaskCategoriesMapList(), weeklyStudyDuration);
 
+		grafUserProgressRatesDto.setMinDate(new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000L)));
+		grafUserProgressRatesDto.setMaxDate(new Date(userProgressRatesDto.getPredictedEndDate().getTime() + (30 * 24 * 60 * 60 * 1000L)));
+
 		model.addAttribute("reportDate", reportDate);
 		model.addAttribute("weeklyStudyDuration", weeklyStudyDuration);
 		model.addAttribute("userProgressRatesDto", userProgressRatesDto);
