@@ -258,9 +258,9 @@ public class HomeController {
 	/**
 	 * DTOコンバータ
 	 *
-	 * @param teamUsersId
-	 * @param reportDate
-	 * @param weeklyStudyDuration
+	 * @param teamUsersId ユーザーID
+	 * @param reportDate 集計日（yyyy-MM-dd）
+	 * @param weeklyStudyDuration 週の学習時間
 	 * @return
 	 */
 	private ResponseUserProgressRatesDto convertUserProgressRatesDto(Long teamUsersId, Date reportDate, Integer weeklyStudyDuration) {
@@ -393,8 +393,8 @@ public class HomeController {
 	/**
 	 * DTOコンバータ
 	 *
-	 * @param progressRatesList
-	 * @param lastAccessLessonMap
+	 * @param progressRatesList 受講生の進捗率
+	 * @param lastAccessLessonMap 受講生の最終着手課題
 	 * @return
 	 */
 	private List<ResponseProgressRatesDto> convertProgressRatesDto(List<ProgressRatesMappingEntity> progressRatesList,

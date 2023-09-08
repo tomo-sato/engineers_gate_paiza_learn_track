@@ -1,8 +1,7 @@
 package jp.dcworks.app.paiza_learn_track.chunk;
 
-import java.util.List;
-
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +37,11 @@ public class TasksProcessWriter implements ItemProcessor<CsvTasks, Tasks>, ItemW
 	}
 
 	@Override
-	public void write(List<? extends Tasks> items) throws Exception {
+	public void write(Chunk<? extends Tasks> items) throws Exception {
 		log.info("TasksWritter:{}", items);
 		log.info("=========");
 
 		// データ登録を行う。
-		tasksService.saveAll(items);
+		tasksService.saveAll(items.getItems());
 	}
 }

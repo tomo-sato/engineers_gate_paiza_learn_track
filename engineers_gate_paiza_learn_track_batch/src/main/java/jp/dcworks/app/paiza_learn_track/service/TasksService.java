@@ -3,13 +3,12 @@ package jp.dcworks.app.paiza_learn_track.service;
 import java.text.ParseException;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jp.dcworks.app.paiza_learn_track.AppConst;
 import jp.dcworks.app.paiza_learn_track.dto.CsvTasks;
 import jp.dcworks.app.paiza_learn_track_library.entity.Tasks;

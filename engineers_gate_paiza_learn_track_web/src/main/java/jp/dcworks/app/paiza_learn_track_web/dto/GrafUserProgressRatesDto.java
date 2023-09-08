@@ -7,14 +7,12 @@ import java.util.List;
 import java.util.TimeZone;
 
 import lombok.Data;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * 講座別進捗一覧画面グラフDTOクラス。
  *
  * @author tomo-sato
  */
-@Log4j2
 @Data
 public class GrafUserProgressRatesDto {
 
@@ -24,7 +22,10 @@ public class GrafUserProgressRatesDto {
 	/** グラフのメタデータ */
 	private Annotations annotations;
 
+	/** グラフの開始日 */
 	private Date minDate;
+
+	/** グラフの終了日 */
 	private Date maxDate;
 
 	@Data

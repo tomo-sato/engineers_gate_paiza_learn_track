@@ -2,9 +2,9 @@ package jp.dcworks.app.paiza_learn_track.chunk;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,12 +49,12 @@ public class ProgressRatesProcessWriter implements ItemProcessor<ProgressRatesMa
 	}
 
 	@Override
-	public void write(List<? extends ProgressRates> items) throws Exception {
+	public void write(Chunk<? extends ProgressRates> items) throws Exception {
 		log.info("ProgressRatesWritter:{}", items);
 		log.info("=========");
 
 		// データ登録を行う。
-		progressRatesService.saveAll(items);
+		progressRatesService.saveAll(items.getItems());
 
 	}
 }

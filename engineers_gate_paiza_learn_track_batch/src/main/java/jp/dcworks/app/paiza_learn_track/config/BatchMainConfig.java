@@ -3,13 +3,15 @@ package jp.dcworks.app.paiza_learn_track.config;
 import org.mybatis.spring.batch.MyBatisPagingItemReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import jp.dcworks.app.paiza_learn_track.chunk.ProgressRatesProcessWriter;
 import jp.dcworks.app.paiza_learn_track.chunk.TaskCategoriesProcessWriter;
@@ -33,18 +35,11 @@ import lombok.RequiredArgsConstructor;
  * @author tomo-sato
  */
 @Configuration
-@EnableBatchProcessing
 @RequiredArgsConstructor
 public class BatchMainConfig {
 
 	/** チャンクサイズ */
 	private static final int CHUNK_SIZE = 100;
-
-	/** Job生成Factory */
-	private final JobBuilderFactory jobBuilderFactory;
-
-	/** Step生成Factory */
-	private final StepBuilderFactory stepBuilderFactory;
 
 	/** 課題データ読み取り：StepExecutionListener */
 	private final CsvTasksImportStepExecutionListener csvTasksImportStepExecutionListener;
@@ -75,11 +70,11 @@ public class BatchMainConfig {
 	 * @return
 	 */
 	@Bean
-	Step csvTasksImportStep() {
+	public Step csvTasksImportStep(JobRepository jobRepository, PlatformTransactionManager txManager) {
 		// Builderの取得
-		return stepBuilderFactory.get("csvTasksImportStep")
+		return new StepBuilder("csvTasksImportStep", jobRepository)
 			.listener(csvTasksImportStepExecutionListener)
-			.<CsvTasks, Tasks>chunk(CHUNK_SIZE)
+			.<CsvTasks, Tasks>chunk(CHUNK_SIZE, txManager)
 			.reader(csvTasksReader)
 			.processor(ｔasksProcessWriter)
 			.writer(ｔasksProcessWriter)
@@ -91,10 +86,10 @@ public class BatchMainConfig {
 	 * @return
 	 */
 	@Bean
-	Step csvTaskCategoriesImportStep() {
+	public Step csvTaskCategoriesImportStep(JobRepository jobRepository, PlatformTransactionManager txManager) {
 		// Builderの取得
-		return stepBuilderFactory.get("csvTasksImportStep")
-			.<CsvTasks, TaskCategories>chunk(CHUNK_SIZE)
+		return new StepBuilder("csvTasksImportStep", jobRepository)
+			.<CsvTasks, TaskCategories>chunk(CHUNK_SIZE, txManager)
 			.reader(csvTasksReader)
 			.processor(taskCategoriesProcessWriter)
 			.writer(taskCategoriesProcessWriter)
@@ -106,11 +101,11 @@ public class BatchMainConfig {
 	 * @return
 	 */
 	@Bean
-	Step csvTeamUserTaskProgressStep() {
+	public Step csvTeamUserTaskProgressStep(JobRepository jobRepository, PlatformTransactionManager txManager) {
 
 		// Builderの取得
-		return stepBuilderFactory.get("csvTeamUserTaskProgressStep")
-			.<CsvTeamUserTaskProgress, TeamUserTaskProgress>chunk(CHUNK_SIZE)
+		return new StepBuilder("csvTeamUserTaskProgressStep", jobRepository)
+			.<CsvTeamUserTaskProgress, TeamUserTaskProgress>chunk(CHUNK_SIZE, txManager)
 			.reader(csvTeamUserTaskProgressReader)
 			.processor(teamUserTaskProgressProcessWritter)
 			.writer(teamUserTaskProgressProcessWritter)
@@ -122,10 +117,10 @@ public class BatchMainConfig {
 	 * @return
 	 */
 	@Bean
-	Step dbTeamUsersStep() {
+	public Step dbTeamUsersStep(JobRepository jobRepository, PlatformTransactionManager txManager) {
 		// Builderの取得
-		return stepBuilderFactory.get("dbTeamUsersStep")
-			.<String, TeamUsers>chunk(CHUNK_SIZE)
+		return new StepBuilder("dbTeamUsersStep", jobRepository)
+			.<String, TeamUsers>chunk(CHUNK_SIZE, txManager)
 			.reader(dbTeamUserTaskProgressReader)
 			.processor(teamUsersProcessWritter)
 			.writer(teamUsersProcessWritter)
@@ -137,10 +132,10 @@ public class BatchMainConfig {
 	 * @return
 	 */
 	@Bean
-	Step dbProgressRatesStep() {
+	public Step dbProgressRatesStep(JobRepository jobRepository, PlatformTransactionManager txManager) {
 		// Builderの取得
-		return stepBuilderFactory.get("dbProgressRatesStep")
-			.<ProgressRatesMap, ProgressRates>chunk(CHUNK_SIZE)
+		return new StepBuilder("dbProgressRatesStep", jobRepository)
+			.<ProgressRatesMap, ProgressRates>chunk(CHUNK_SIZE, txManager)
 			.reader(dbProgressRatesReader)
 			.processor(progressRatesProcessWriter)
 			.writer(progressRatesProcessWriter)
@@ -152,14 +147,19 @@ public class BatchMainConfig {
 	 * @return
 	 */
 	@Bean
-	Job job() {
-		return jobBuilderFactory.get("paizaLearnTrackJob")
+	public Job job(JobRepository jobRepository, PlatformTransactionManager txManager,
+			@Qualifier("csvTasksImportStep") Step csvTasksImportStep,
+			@Qualifier("csvTeamUserTaskProgressStep") Step csvTeamUserTaskProgressStep,
+			@Qualifier("dbTeamUsersStep") Step dbTeamUsersStep,
+			@Qualifier("dbProgressRatesStep") Step dbProgressRatesStep) {
+
+		return new JobBuilder("paizaLearnTrackJob", jobRepository)
 			.incrementer(new RunIdIncrementer())
-			.start(csvTasksImportStep())
+			.start(csvTasksImportStep)
 //			.next(csvTaskCategoriesImportStep())
-			.next(csvTeamUserTaskProgressStep())
-			.next(dbTeamUsersStep())
-			.next(dbProgressRatesStep())
+			.next(csvTeamUserTaskProgressStep)
+			.next(dbTeamUsersStep)
+			.next(dbProgressRatesStep)
 			.build();
 	}
 }

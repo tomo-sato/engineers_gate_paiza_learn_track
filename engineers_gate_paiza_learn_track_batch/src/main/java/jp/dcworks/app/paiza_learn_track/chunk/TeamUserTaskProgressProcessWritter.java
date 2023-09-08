@@ -2,9 +2,9 @@ package jp.dcworks.app.paiza_learn_track.chunk;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,11 +49,11 @@ public class TeamUserTaskProgressProcessWritter implements ItemProcessor<CsvTeam
 	}
 
 	@Override
-	public void write(List<? extends TeamUserTaskProgress> items) throws Exception {
+	public void write(Chunk<? extends TeamUserTaskProgress> items) throws Exception {
 		log.info("TeamUserTaskProgressWritter:{}", items);
 		log.info("=========");
 
 		// データ登録を行う。
-		teamUserTaskProgressService.saveAll(items);
+		teamUserTaskProgressService.saveAll(items.getItems());
 	}
 }

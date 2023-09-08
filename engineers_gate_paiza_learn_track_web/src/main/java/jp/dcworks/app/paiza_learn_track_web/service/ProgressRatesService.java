@@ -35,7 +35,7 @@ public class ProgressRatesService {
 	 * progress_rates テーブルより team_users_id でグルーピングした学習進捗率を取得する。
 	 *
 	 * @param reportDate 集計日
-	 * @param sumLearningMinutes 学習時間合計
+	 * @param sumLearningHours 学習時間合計
 	 * @return
 	 */
 	public List<ProgressRatesMappingEntity> getProgressRate(Date reportDate, Double sumLearningHours) {

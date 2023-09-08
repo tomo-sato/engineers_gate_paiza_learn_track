@@ -2,8 +2,7 @@ package jp.dcworks.app.paiza_learn_track_web.dto;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotBlank;
-
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
