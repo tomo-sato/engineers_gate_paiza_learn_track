@@ -12,9 +12,9 @@ paizaラーニング管理画面よりダウンロードできる「ユーザー
 
 ### 進捗一覧画面
 
-<img src="https://github.com/tomo-sato/paiza_learn_track/blob/main/doc/screenshot/img_001.jpg" width="75%">
+<img src="https://github.com/tomo-sato/engineers_gate_paiza_learn_track/blob/main/doc/screenshot/img_001.jpg" width="75%">
 
 ### 進捗詳細画面
 
-<img src="https://github.com/tomo-sato/paiza_learn_track/blob/main/doc/screenshot/img_002.jpg" width="75%">
+<img src="https://github.com/tomo-sato/engineers_gate_paiza_learn_track/blob/main/doc/screenshot/img_002.jpg" width="75%">
 
