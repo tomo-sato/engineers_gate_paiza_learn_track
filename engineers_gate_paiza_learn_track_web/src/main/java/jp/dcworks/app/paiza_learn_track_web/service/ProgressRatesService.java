@@ -97,6 +97,7 @@ public class ProgressRatesService {
 			progressRates.setLessonId(lessonId);
 			progressRates.setLessonName(tasks.getLessonName());
 			progressRates.setReportDate(reportDate);
+			progressRates.setTaskCategoriesId(tasks.getTaskCategoriesId());
 		}
 		progressRates.setAchievedLearningHours(achievedLearningHours);
 		progressRates.setTotalLearningHours(totalLearningHours);
